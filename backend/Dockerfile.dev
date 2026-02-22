@@ -1,0 +1,19 @@
+# Etapa única para desarrollo
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copiar dependencias
+COPY package*.json ./
+
+# Instalar todas (incluyendo devDependencies)
+RUN npm install
+
+# Copiar el código fuente
+COPY . .
+
+# Exponer el puerto del backend
+EXPOSE 3001
+
+# Comando de desarrollo (usa ts-node-dev)
+CMD ["npm", "run", "dev"]
