@@ -1,23 +1,33 @@
 // ============================================================
-// frontend/src/App.tsx
+// frontend/src/App.tsx  —  Fase 7 (actualizado)
 //
-// CAMBIOS vs Fase 3 original:
-// - ELIMINADA: ruta /autoservicio/mesa (TableValidator)
-//   Autoservicio accede directo al menú sin validar mesa.
-// - /autoservicio/menu ahora es el punto de entrada del flujo.
+// CAMBIO: /caja/dashboard ahora carga CajaMesero.tsx (Fase 7)
+// en lugar del componente <Soon>.
 // ============================================================
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Home           from './pages/Home';
-import RoleSelectPage from './pages/RoleSelectPage';
-import LoginPage      from './pages/LoginPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import Home              from './pages/Home';
+import RoleSelectPage    from './pages/RoleSelectPage';
+import LoginPage         from './pages/LoginPage';
+import ProtectedRoute    from './components/auth/ProtectedRoute';
 
-// ── Fase 3: Cliente Autoservicio ──────────────────────────────
-// SIN TableValidator — autoservicio no gestiona mesas
-import ClientMenu   from './pages/ClientMenu';
-import Checkout     from './pages/Checkout';
-import OrderTracker from './pages/OrderTracker';
+// Fase 3
+import ClientMenu        from './pages/ClientMenu';
+import Checkout          from './pages/Checkout';
+import OrderTracker      from './pages/OrderTracker';
+
+// Fase 4
+import CajaAutoservicio  from './pages/caja/CajaAutoservicio';
+
+// Fase 5
+import KDS               from './pages/cocina/KDS';
+
+// Fase 6
+import TableDashboard    from './pages/mesero/TableDashboard';
+import TakeOrder         from './pages/mesero/TakeOrder';
+
+// Fase 7
+import CajaMesero        from './pages/cashier/CajaMesero';
 
 const Soon = ({ label }: { label: string }) => (
   <div style={{
@@ -48,32 +58,72 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ── Fase 2: Acceso ── */}
+        {/* Fase 2 */}
         <Route path="/"            element={<Home />} />
         <Route path="/select-role" element={<RoleSelectPage />} />
         <Route path="/login"       element={<LoginPage />} />
 
-        {/* ── Fase 3: Autoservicio — sin validación de mesa ── */}
+        {/* Fase 3: Cliente autoservicio (sin login) */}
         <Route path="/autoservicio/menu"        element={<ClientMenu />} />
         <Route path="/autoservicio/checkout"    element={<Checkout />} />
         <Route path="/autoservicio/tracker/:id" element={<OrderTracker />} />
 
-        {/* ── Fase 4+: Personal autenticado ── */}
-        <Route path="/autoservicio/caja"
-          element={<ProtectedRoute allowedRoles={['caja','admin']}><Soon label="Caja Autoservicio" /></ProtectedRoute>}
+        {/* Fase 4: Caja autoservicio */}
+        <Route
+          path="/autoservicio/caja"
+          element={
+            <ProtectedRoute allowedRoles={['caja', 'admin']}>
+              <CajaAutoservicio />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/cocina/kds"
-          element={<ProtectedRoute allowedRoles={['cocina','admin']}><Soon label="Kitchen Display System" /></ProtectedRoute>}
+
+        {/* Fase 5: KDS */}
+        <Route
+          path="/cocina/kds"
+          element={
+            <ProtectedRoute allowedRoles={['cocina', 'admin']}>
+              <KDS />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/mesero/dashboard"
-          element={<ProtectedRoute allowedRoles={['mesero','admin']}><Soon label="Dashboard Mesero" /></ProtectedRoute>}
+
+        {/* Fase 6: Módulo Mesero */}
+        <Route
+          path="/mesero/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['mesero', 'admin']}>
+              <TableDashboard />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/mesero/menu-cliente" element={<Soon label="Menú Cliente (Mesero)" />} />
-        <Route path="/caja/dashboard"
-          element={<ProtectedRoute allowedRoles={['caja','admin']}><Soon label="Caja — Modo Mesero" /></ProtectedRoute>}
+        <Route
+          path="/mesero/orden/:tableId"
+          element={
+            <ProtectedRoute allowedRoles={['mesero', 'admin']}>
+              <TakeOrder />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/admin/dashboard"
-          element={<ProtectedRoute allowedRoles={['admin']}><Soon label="Dashboard Admin" /></ProtectedRoute>}
+
+        {/* Fase 7: Caja Con Mesero */}
+        <Route
+          path="/caja/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['caja', 'admin']}>
+              <CajaMesero />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fase futura: Admin */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Soon label="Dashboard Admin" />
+            </ProtectedRoute>
+          }
         />
 
         <Route path="/unauthorized" element={<Unauthorized />} />

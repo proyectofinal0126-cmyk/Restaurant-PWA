@@ -1,109 +1,110 @@
 // ============================================================
 // backend/src/websocket/handlers.ts
 //
-// Maneja las conexiones WebSocket de clientes, caja y cocina.
-// Permite suscribirse a una orderId específica para recibir
-// solo los eventos relevantes de esa orden.
+// CAMBIO FASE 6: isGlobalRole ahora incluye 'mesero'.
+// El dashboard de mesas necesita recibir broadcast global de:
+//   - order:status  → para actualizar el estado en las tarjetas
+//   - table:status  → para actualizar el grid en tiempo real
 //
-// Uso desde orderController:
-//   import { broadcast } from '../websocket/handlers';
-//   broadcast({ type: 'order:status', payload: {...}, targetOrderId: id });
+// Sin este cambio, useWaiterWebSocket no recibe nada porque
+// el mesero conectado no tenía rol en isGlobalRole.
 // ============================================================
 
 import { WebSocketServer, WebSocket } from 'ws';
-import { IncomingMessage, Server } from 'http';
+import { IncomingMessage, Server }    from 'http';
 
 interface WsClient extends WebSocket {
   isAlive:  boolean;
-  orderId?: string; // orden a la que está suscrito
-  role?:    string; // rol del usuario (para caja/cocina reciben todo)
+  orderId?: string; // orden a la que está suscrito (cliente tracker)
+  role?:    string; // rol del usuario (personal)
 }
 
 interface BroadcastOptions {
   type:           string;
   payload:        unknown;
-  targetOrderId?: string; // si se especifica, solo va a clientes suscritos a esa orden
+  targetOrderId?: string; // si se especifica, solo va a clientes de esa orden
 }
 
 let wss: WebSocketServer | null = null;
 
-/**
- * Inicializa el servidor WebSocket sobre el HTTP server de Express.
- * Se llama una sola vez desde server.ts.
- */
 export function initWebSocket(server: Server): void {
   wss = new WebSocketServer({ server });
 
   wss.on('connection', (ws: WsClient, req: IncomingMessage) => {
     ws.isAlive = true;
 
-    // Extraer orderId de query string (?orderId=xxx)
-    const url    = new URL(req.url ?? '/', `http://localhost`);
-    const oId    = url.searchParams.get('orderId');
-    if (oId) ws.orderId = oId;
+    // Extraer orderId y role del query string
+    const url  = new URL(req.url ?? '/', 'http://localhost');
+    const oId  = url.searchParams.get('orderId');
+    const role = url.searchParams.get('role');
 
-    console.log(`[WS] Cliente conectado. orderId: ${ws.orderId ?? 'ninguno'}`);
+    if (oId)  ws.orderId = oId;
+    if (role) ws.role    = role; // permite pre-identificar el rol en la URL
 
-    // Confirmar conexión al cliente
+    console.log(
+      `[WS] Conectado — role: ${ws.role ?? 'cliente'} | orderId: ${ws.orderId ?? 'ninguno'}`
+    );
+
     ws.send(JSON.stringify({ type: 'connected', payload: { orderId: ws.orderId } }));
 
-    // Manejar mensajes del cliente
     ws.on('message', (raw) => {
       try {
-        const msg = JSON.parse(raw.toString()) as { type: string; orderId?: string; role?: string };
+        const msg = JSON.parse(raw.toString()) as {
+          type: string; orderId?: string; role?: string;
+        };
 
         if (msg.type === 'subscribe' && msg.orderId) {
           ws.orderId = msg.orderId;
           console.log(`[WS] Suscripción a orden: ${msg.orderId}`);
         }
 
+        // Permite al cliente establecer el rol después de conectarse
         if (msg.type === 'role' && msg.role) {
           ws.role = msg.role;
+          console.log(`[WS] Rol asignado: ${msg.role}`);
         }
       } catch {
-        // Ignorar mensajes malformados
+        // ignorar mensajes malformados
       }
     });
 
-    ws.on('pong', () => { ws.isAlive = true; });
-
+    ws.on('pong',  () => { ws.isAlive = true; });
     ws.on('close', () => {
-      console.log(`[WS] Cliente desconectado. orderId: ${ws.orderId ?? 'ninguno'}`);
+      console.log(`[WS] Desconectado — role: ${ws.role ?? 'cliente'} | orderId: ${ws.orderId ?? 'ninguno'}`);
     });
-
     ws.on('error', (err) => {
       console.error('[WS] Error en cliente:', err.message);
     });
   });
 
-  // Heartbeat: detectar conexiones muertas cada 30s
+  // Heartbeat — detectar conexiones muertas cada 30s
   const heartbeat = setInterval(() => {
     if (!wss) return;
     wss.clients.forEach((client) => {
       const ws = client as WsClient;
-      if (!ws.isAlive) {
-        ws.terminate();
-        return;
-      }
+      if (!ws.isAlive) { ws.terminate(); return; }
       ws.isAlive = false;
       ws.ping();
     });
   }, 30_000);
 
   wss.on('close', () => clearInterval(heartbeat));
-
   console.log('[WS] Servidor WebSocket iniciado');
 }
 
 /**
  * Envía un mensaje a los clientes relevantes.
  *
- * Si se especifica targetOrderId:
- *   - Los clientes con ese orderId lo reciben.
- *   - Los clientes con rol 'caja' o 'cocina' siempre lo reciben (monitores globales).
+ * Con targetOrderId:
+ *   → Clientes suscritos a esa orden (cliente en tracker)
+ *   → Roles globales: caja, cocina, mesero, admin
  *
- * Si NO se especifica targetOrderId:
- *   - Se envía a TODOS los clientes conectados (broadcast global).
+ * Sin targetOrderId:
+ *   → Broadcast a TODOS los clientes conectados
+ *
+ * FASE 6: 'mesero' añadido a isGlobalRole para recibir:
+ *   - order:status (sincronizar estado de mesas)
+ *   - table:status (sincronizar grid de mesas)
  */
 export function broadcast(options: BroadcastOptions): void {
   if (!wss) return;
@@ -120,9 +121,13 @@ export function broadcast(options: BroadcastOptions): void {
       return;
     }
 
-    // Enviar si: está suscrito a esta orden, O tiene rol de monitor global
-    const isSubscribed  = ws.orderId === targetOrderId;
-    const isGlobalRole  = ws.role === 'caja' || ws.role === 'cocina' || ws.role === 'admin';
+    const isSubscribed = ws.orderId === targetOrderId;
+    // FIX FASE 6: 'mesero' añadido para que reciba broadcasts globales
+    const isGlobalRole =
+      ws.role === 'caja'   ||
+      ws.role === 'cocina' ||
+      ws.role === 'mesero' ||   // ← NUEVO
+      ws.role === 'admin';
 
     if (isSubscribed || isGlobalRole) {
       ws.send(message);

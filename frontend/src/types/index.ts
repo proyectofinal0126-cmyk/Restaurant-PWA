@@ -4,3 +4,4 @@
 
 export type * from './menu';
 export type * from './order';
+export type * from './table'; // ← NUEVO: Table, TableStatus, WaiterOrderPayload, etc.

@@ -2,7 +2,7 @@
 // frontend/src/services/api.ts
 //
 // Cliente HTTP base centralizado.
-// Todos los servicios (menu, order) lo usan.
+// Todos los servicios (menu, order, caja) lo usan.
 // VITE_API_URL viene del .env del frontend.
 // ============================================================
 
@@ -25,17 +25,17 @@ export class ApiError extends Error {
  */
 export async function apiFetch<T>(
   path: string,
-  options?: RequestInit
+  options: RequestInit = {}
 ): Promise<T> {
   const token = localStorage.getItem('rpwa-token');
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, {  // ✅ BASE_URL — no API_BASE
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options?.headers,
+      ...options.headers,
     },
-    ...options,
   });
 
   if (!res.ok) {

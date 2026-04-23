@@ -1,11 +1,8 @@
 // ============================================================
-// backend/src/routes/orders.ts
+// backend/src/routes/orders.ts  —  Fixes multi
 //
-// CAMBIOS vs Fase 3 original:
-// - POST /api/orders y GET /api/orders/:id son públicos.
-//   El cliente autoservicio los usa sin login.
-// - table_id es null en autoservicio — el controller lo valida
-//   según el campo source del body.
+// NUEVO: GET /api/orders/history  — historial del día (FIX 4)
+// NUEVO: GET /api/orders/metrics  — timings operacionales (FIX 5)
 // ============================================================
 
 import { Router } from 'express';
@@ -14,37 +11,59 @@ import {
   getOrderById,
   updateOrderStatus,
   getActiveOrders,
+  getOrderHistory,
 } from '../controllers/orderController';
-import { authenticate } from '../middleware/auth';
-import { requireRole } from '../middleware/roleAuth';
+import { closeOrder }  from '../controllers/cajaController';
+import { getOrderMetrics } from '../controllers/metricsController';
+import { authenticate }   from '../middleware/auth';
+import { requireRole }    from '../middleware/roleAuth';
 
 const router = Router();
 
-// ── Rutas públicas (cliente sin login) ──────────────────────
+// ── Rutas específicas (SIEMPRE antes que /:id) ───────────────
 
-// Crea una nueva orden. En autoservicio: table_id = null, source = 'autoservicio'.
-// En flujo mesero: table_id = UUID de la mesa, source = 'waiter'.
-router.post('/', createOrder);
-
-// Consulta el estado de una orden — el cliente rastrea su pedido
-router.get('/:id', getOrderById);
-
-// ── Rutas protegidas (solo personal autenticado) ─────────────
-
-// Dashboard de caja/cocina — lista todas las órdenes activas
+// Órdenes activas — caja, cocina, mesero, admin
 router.get(
-  '/',
+  '/active',
   authenticate,
   requireRole(['caja', 'cocina', 'mesero', 'admin']),
   getActiveOrders
 );
 
-// Actualizar estado de una orden (caja valida, cocina prepara, etc.)
+// FIX 4: Historial del día — solo caja y admin
+router.get(
+  '/history',
+  authenticate,
+  requireRole(['caja', 'admin']),
+  getOrderHistory
+);
+
+// FIX 5: Métricas operacionales — solo admin y caja
+router.get(
+  '/metrics',
+  authenticate,
+  requireRole(['caja', 'admin']),
+  getOrderMetrics
+);
+
+// ── Ruta pública: crear orden ────────────────────────────────
+router.post('/', createOrder);
+
+// ── Rutas con parámetro /:id ─────────────────────────────────
+router.get('/:id', getOrderById);
+
 router.patch(
   '/:id/status',
   authenticate,
   requireRole(['caja', 'cocina', 'admin']),
   updateOrderStatus
+);
+
+router.post(
+  '/:id/close',
+  authenticate,
+  requireRole(['caja', 'admin']),
+  closeOrder
 );
 
 export default router;

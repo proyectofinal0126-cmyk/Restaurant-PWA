@@ -11,7 +11,7 @@
 
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { useOrderStore } from '../store/orderStore';
 import { createOrder } from '../services/orderService';
@@ -39,8 +39,7 @@ export default function Checkout() {
 
   // Carrito vacío → volver al menú
   if (items.length === 0) {
-    navigate('/autoservicio/menu', { replace: true });
-    return null;
+    return <Navigate to="/autoservicio/menu" replace />;
   }
 
   const subtotal = getTotal();

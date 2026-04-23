@@ -1,14 +1,8 @@
 // ============================================================
-// backend/src/routes/tables.ts
+// backend/src/routes/tables.ts  —  Fase 6
 //
-// CAMBIOS vs Fase 3 original:
-// - ACLARACIÓN: GET /api/tables/validate/:code sigue existiendo
-//   pero es para uso exclusivo del flujo Con Mesero (Fase 6),
-//   donde el mesero puede asignar una mesa a un pedido.
-//   El flujo Autoservicio NO llama este endpoint.
-//
-// - Todas las rutas de mesas requieren autenticación porque
-//   son operaciones de personal, no del cliente.
+// Sin cambios en las rutas — solo el controller fue actualizado.
+// Se entrega completo para reemplazar el archivo anterior.
 // ============================================================
 
 import { Router } from 'express';
@@ -18,13 +12,11 @@ import {
   updateTableStatus,
 } from '../controllers/tableController';
 import { authenticate } from '../middleware/auth';
-import { requireRole } from '../middleware/roleAuth';
+import { requireRole }  from '../middleware/roleAuth';
 
 const router = Router();
 
-// Validar mesa — uso exclusivo del flujo Con Mesero (Fase 6).
-// NOTA: En Fase 3 (Autoservicio) este endpoint NO se usa.
-// Se mantiene para compatibilidad con Fase 6 (mesero).
+// Validar mesa por número o QR — solo mesero/caja/admin
 router.get(
   '/validate/:code',
   authenticate,
@@ -32,7 +24,7 @@ router.get(
   validateTable
 );
 
-// Listar todas las mesas (mesero y caja)
+// Mesas enriquecidas con datos de orden activa
 router.get(
   '/',
   authenticate,
@@ -40,7 +32,7 @@ router.get(
   getAllTables
 );
 
-// Cambiar estado de una mesa
+// Actualizar estado + broadcast WebSocket
 router.patch(
   '/:id/status',
   authenticate,

@@ -1,0 +1,108 @@
+# ============================================
+# 🚫 NODE & NPM
+# ============================================
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json     
+
+# Caché de npm
+.npm/
+.eslintcache
+
+# ============================================
+# 🚫 TYPESCRIPT & BUILD
+# ============================================
+# Outputs de compilación
+dist/
+build/
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+
+# Directorios intermedios de TS
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# ============================================
+# 🚫 VARIABLES DE ENTORNO & SECRETS
+# ============================================
+# Archivos .env (NUNCA subir secretos)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env*.example             # ✅ Mantén un .env.example para documentación
+
+# Claves y certificados
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+config/production.json
+
+# ============================================
+# 🚫 IDE & EDITORES
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# ============================================
+# 🚫 SISTEMA OPERATIVO
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# ============================================
+# 🚫 TESTS & COBERTURA
+# ============================================
+coverage/
+.nyc_output/
+jest.config.js.bak
+*.test.js
+*.spec.js
+__tests__/__snapshots__/
+
+# ============================================
+# 🚫 BASE DE DATOS (Local/Dev)
+# ============================================
+# PostgreSQL dumps locales (si los generas manualmente)
+*.sql.dump
+*.backup
+data/postgresql/          # Si montas volúmenes locales
+
+# ============================================
+# 🚫 REDIS
+# ============================================
+dump.rdb
+appendonly.aof
+redis-data/
+
+# ============================================
+# 🚫 DOCKER (Archivos generados)
+# ============================================
+# Mantén docker-compose.yml y Dockerfile ✅
+# Ignora solo artefactos de build
+*.dockerignore
+docker-compose.override.yml   # Para configs locales personales
+
+# ============================================
+# 🚫 TEMPORALES & BACKUPS
+# ============================================
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.log

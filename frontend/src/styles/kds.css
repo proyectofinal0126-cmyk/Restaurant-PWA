@@ -1,0 +1,492 @@
+/* ============================================================
+   KDS — Kitchen Display System
+   Optimizado para tablets horizontales (1024x768+)
+   Modo oscuro, alto contraste, tipografía grande
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;700;800;900&family=Satoshi:wght@300;400;500;600&display=swap');
+
+/* ── Reset base ── */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+/* ── Variables de color ── */
+:root {
+  --kds-bg:          #050508;
+  --kds-surface:     #0c0c14;
+  --kds-surface-2:   #111118;
+  --kds-border:      rgba(255,255,255,0.07);
+  --kds-text:        #f0ece6;
+  --kds-text-muted:  #6b6775;
+  --kds-text-dim:    #3a3a4a;
+
+  --kds-red:         #ef4444;
+  --kds-red-soft:    rgba(239,68,68,0.12);
+  --kds-red-border:  rgba(239,68,68,0.25);
+
+  --kds-orange:      #f97316;
+  --kds-orange-soft: rgba(249,115,22,0.12);
+  --kds-orange-border:rgba(249,115,22,0.25);
+
+  --kds-green:       #22c55e;
+  --kds-green-soft:  rgba(34,197,94,0.12);
+  --kds-green-border:rgba(34,197,94,0.25);
+
+  --kds-yellow:      #eab308;
+}
+
+/* ── Root del KDS ── */
+.kds-root {
+  min-height: 100svh;
+  background: var(--kds-bg);
+  color: var(--kds-text);
+  font-family: 'Satoshi', sans-serif;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════ */
+.kds-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--kds-surface);
+  border-bottom: 1px solid var(--kds-border);
+  flex-shrink: 0;
+  min-height: 64px;
+}
+
+.kds-header-left  { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.kds-header-center { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.kds-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.kds-logo {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.kds-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 18px; font-weight: 900;
+  color: var(--kds-text); letter-spacing: -0.4px;
+  line-height: 1.1;
+}
+.kds-subtitle { font-size: 12px; color: var(--kds-text-muted); }
+
+/* Pills de estado en header */
+.kds-pill {
+  font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 100px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.kds-pill--red    { background: var(--kds-red-soft);    color: var(--kds-red);    border-color: var(--kds-red-border);    }
+.kds-pill--orange { background: var(--kds-orange-soft); color: var(--kds-orange); border-color: var(--kds-orange-border); }
+.kds-pill--green  { background: var(--kds-green-soft);  color: var(--kds-green);  border-color: var(--kds-green-border);  }
+
+.kds-total-label { font-size: 13px; color: var(--kds-text-muted); white-space: nowrap; }
+
+/* Botones header */
+.kds-icon-btn {
+  min-width: 44px; min-height: 44px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--kds-border);
+  color: var(--kds-text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.kds-icon-btn:hover { color: var(--kds-text); background: rgba(255,255,255,0.09); }
+
+.kds-exit-btn {
+  display: flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--kds-border);
+  color: var(--kds-text-muted); font-size: 13px;
+  transition: color 0.2s, background 0.2s;
+}
+.kds-exit-btn:hover { color: var(--kds-text); background: rgba(255,255,255,0.09); }
+
+/* ── Error banner ── */
+.kds-error-banner {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(239,68,68,0.08);
+  border-bottom: 1px solid rgba(239,68,68,0.2);
+  padding: 10px 20px;
+  font-size: 14px; color: var(--kds-red);
+  flex-shrink: 0;
+}
+.kds-banner-close {
+  margin-left: auto; font-size: 20px; color: var(--kds-red);
+  padding: 0 4px; line-height: 1;
+}
+
+/* ── Loading ── */
+.kds-loading {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; color: var(--kds-text-muted);
+}
+.kds-spinner {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(249,115,22,0.2);
+  border-top-color: var(--kds-orange);
+  animation: kds-spin 0.8s linear infinite;
+}
+@keyframes kds-spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════════════════
+   KANBAN — 3 COLUMNAS
+   ══════════════════════════════════════════════════════════ */
+.kds-kanban {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  overflow: hidden;
+  min-height: 0; /* permite que flex-children hagan scroll */
+}
+
+@media (max-width: 900px) {
+  /* Fallback para pantallas más pequeñas */
+  .kds-kanban {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+}
+
+/* ── Columna ── */
+.kds-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--kds-border);
+  min-height: 0;
+  overflow: hidden;
+}
+.kds-col:last-child { border-right: none; }
+
+/* Header de columna */
+.kds-col-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--kds-border);
+  flex-shrink: 0;
+  min-height: 52px;
+}
+.kds-col-header--red    { background: rgba(239,68,68,0.04); }
+.kds-col-header--orange { background: rgba(249,115,22,0.04); }
+.kds-col-header--green  { background: rgba(34,197,94,0.04);  }
+
+.kds-col-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.kds-col-header--red    .kds-col-dot { background: var(--kds-red);    animation: dot-pulse-red    2s ease-in-out infinite; }
+.kds-col-header--orange .kds-col-dot { background: var(--kds-orange); animation: dot-pulse-orange 2s ease-in-out infinite; }
+.kds-col-header--green  .kds-col-dot { background: var(--kds-green);  animation: dot-pulse-green  2s ease-in-out infinite; }
+
+@keyframes dot-pulse-red    { 0%,100%{box-shadow:0 0 0 3px rgba(239,68,68,.12)}   50%{box-shadow:0 0 0 6px rgba(239,68,68,.04)} }
+@keyframes dot-pulse-orange { 0%,100%{box-shadow:0 0 0 3px rgba(249,115,22,.12)} 50%{box-shadow:0 0 0 6px rgba(249,115,22,.04)} }
+@keyframes dot-pulse-green  { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.12)}  50%{box-shadow:0 0 0 6px rgba(34,197,94,.04)} }
+
+.kds-col-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 15px; font-weight: 800; color: var(--kds-text);
+  flex: 1; letter-spacing: -0.2px;
+}
+.kds-col-count {
+  font-size: 12px; font-weight: 700;
+  color: var(--kds-text-muted);
+  background: rgba(255,255,255,0.06);
+  padding: 2px 9px; border-radius: 100px;
+}
+
+/* Body scrollable */
+.kds-col-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.kds-col-body::-webkit-scrollbar { width: 4px; }
+.kds-col-body::-webkit-scrollbar-track { background: transparent; }
+.kds-col-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+/* Columna vacía */
+.kds-empty-col {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; padding: 40px 20px;
+  color: var(--kds-text-dim); text-align: center;
+  font-size: 14px;
+  min-height: 180px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ORDER PREP — TARJETA DE ORDEN
+   ══════════════════════════════════════════════════════════ */
+.op-card {
+  background: var(--kds-surface-2);
+  border: 1px solid var(--kds-border);
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  animation: card-in 0.25s ease both;
+  transition: border-color 0.3s;
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Borde izquierdo de color según estado */
+.op-card--new   { border-left: 3px solid var(--kds-red);    }
+.op-card--ready {
+  border-left: 3px solid var(--kds-green);
+  animation: card-in 0.25s ease both, ready-pulse 2s ease-in-out infinite;
+}
+@keyframes ready-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.08); }
+  50%     { box-shadow: 0 0 12px 2px rgba(34,197,94,0.12); }
+}
+
+/* Header de la tarjeta */
+.op-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 8px;
+  gap: 8px; flex-wrap: wrap;
+}
+.op-header-left  { display: flex; align-items: center; gap: 10px; }
+.op-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.op-order-number {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 20px; font-weight: 900; /* grande y legible a distancia */
+  color: var(--kds-text); letter-spacing: -0.5px;
+}
+
+.op-source {
+  font-size: 11px; color: var(--kds-text-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 3px 9px; border-radius: 100px;
+}
+.op-total {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 16px; font-weight: 800; color: var(--kds-text);
+}
+
+/* Notas de la orden */
+.op-order-notes {
+  display: flex; align-items: flex-start; gap: 6px;
+  margin: 0 14px 6px;
+  font-size: 13px; color: var(--kds-text-muted);
+  background: rgba(249,115,22,0.06);
+  border: 1px solid rgba(249,115,22,0.15);
+  border-radius: 8px; padding: 7px 10px;
+  font-style: italic;
+}
+
+/* Lista de items */
+.op-items {
+  list-style: none;
+  padding: 4px 14px 8px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.op-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 8px; border-radius: 8px;
+  transition: background 0.2s, opacity 0.2s;
+}
+.op-item--done {
+  opacity: 0.5;
+  background: rgba(34,197,94,0.05);
+}
+
+/* Checkbox táctil — WCAG mínimo 48×48px */
+.op-checkbox {
+  min-width: 48px; min-height: 48px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.04);
+  color: var(--kds-green);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.op-checkbox:hover:not(:disabled) {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+}
+.op-checkbox--checked {
+  background: var(--kds-green-soft);
+  border-color: var(--kds-green);
+}
+.op-checkbox:disabled { opacity: 0.4; cursor: default; }
+
+/* Info del item */
+.op-item-info {
+  flex: 1;
+  display: flex; align-items: baseline; gap: 6px;
+  flex-wrap: wrap;
+}
+.op-item-qty  {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 16px; font-weight: 900; color: var(--kds-orange);
+  flex-shrink: 0;
+}
+.op-item-name {
+  font-size: 16px; font-weight: 600; color: var(--kds-text);
+  /* Grande y legible a distancia en tablet */
+}
+.op-item-notes {
+  font-size: 12px; color: var(--kds-text-muted);
+  font-style: italic;
+}
+.op-item-price {
+  font-size: 13px; color: var(--kds-text-muted);
+  flex-shrink: 0;
+}
+
+/* Barra de progreso */
+.op-progress {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 14px 8px;
+}
+.op-progress-bar {
+  flex: 1; height: 4px; border-radius: 100px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.op-progress-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--kds-orange), var(--kds-green));
+  transition: width 0.3s ease;
+}
+.op-progress-text { font-size: 11px; color: var(--kds-text-muted); white-space: nowrap; }
+
+/* Footer de la tarjeta */
+.op-footer {
+  padding: 8px 14px 14px;
+  display: flex; justify-content: stretch;
+}
+
+/* Botones de acción — mínimo 48px de alto (WCAG) */
+.op-btn {
+  flex: 1;
+  min-height: 52px;
+  border-radius: 12px;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 15px; font-weight: 800; letter-spacing: -0.2px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.op-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.op-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.op-btn:active:not(:disabled) { transform: translateY(0); }
+
+.op-btn--accept {
+  background: rgba(239,68,68,0.15);
+  border: 1.5px solid rgba(239,68,68,0.3);
+  color: var(--kds-red);
+}
+.op-btn--accept:hover:not(:disabled) {
+  background: rgba(239,68,68,0.25);
+  box-shadow: 0 4px 16px rgba(239,68,68,0.15);
+}
+
+.op-btn--ready {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  color: var(--kds-text-muted);
+}
+.op-btn--ready-active {
+  background: rgba(34,197,94,0.15);
+  border-color: rgba(34,197,94,0.35);
+  color: var(--kds-green);
+}
+.op-btn--ready-active:hover:not(:disabled) {
+  background: rgba(34,197,94,0.25);
+  box-shadow: 0 4px 16px rgba(34,197,94,0.2);
+}
+
+/* Badge "listo para entregar" */
+.op-ready-badge {
+  flex: 1; min-height: 48px;
+  border-radius: 12px;
+  background: var(--kds-green-soft);
+  border: 1.5px solid var(--kds-green-border);
+  color: var(--kds-green);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 15px; font-weight: 800;
+}
+
+/* ══════════════════════════════════════════════════════════
+   KDS TIMER
+   ══════════════════════════════════════════════════════════ */
+.kds-timer {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 600;
+  padding: 3px 10px; border-radius: 100px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.kds-timer--green  { background: var(--kds-green-soft);  color: var(--kds-green);  }
+.kds-timer--yellow { background: rgba(234,179,8,0.12);   color: var(--kds-yellow); }
+.kds-timer--red    {
+  background: var(--kds-red-soft); color: var(--kds-red);
+  animation: timer-blink 1.5s ease-in-out infinite;
+}
+@keyframes timer-blink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.6; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — tablets/pantallas industriales
+   ══════════════════════════════════════════════════════════ */
+
+/* Tablet landscape estándar */
+@media (min-width: 1024px) {
+  .op-order-number { font-size: 22px; }
+  .op-item-name    { font-size: 17px; }
+  .op-btn          { font-size: 16px; min-height: 56px; }
+}
+
+/* Pantallas grandes (pantallas de cocina montadas en pared) */
+@media (min-width: 1440px) {
+  .kds-title       { font-size: 20px; }
+  .op-order-number { font-size: 24px; }
+  .op-item-qty     { font-size: 18px; }
+  .op-item-name    { font-size: 18px; }
+  .op-btn          { font-size: 17px; min-height: 60px; }
+  .op-checkbox     { min-width: 52px; min-height: 52px; }
+}
+
+/* Fallback móvil (por si se abre en un teléfono) */
+@media (max-width: 600px) {
+  .kds-header        { padding: 10px 14px; }
+  .kds-header-center { display: none; }
+  .kds-col-header    { padding: 10px 12px; }
+  .kds-col-body      { padding: 8px; }
+  .op-card           { border-radius: 10px; }
+}
