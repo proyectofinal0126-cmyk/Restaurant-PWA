@@ -1,3 +1,4 @@
+import { formatCOP } from '../../utils/constants';
 // ============================================================
 // frontend/src/pages/mesero/TakeOrder.tsx
 // Ruta: /mesero/orden/:tableId
@@ -243,7 +244,7 @@ export default function TakeOrder() {
                           <span className="to-item-desc">{item.description}</span>
                         )}
                         <span className="to-item-price">
-                          ${parseFloat(item.price as unknown as string).toFixed(2)}
+                          {formatCOP(parseFloat(item.price as unknown as string))}
                         </span>
                         {item.preparation_time && (
                           <span className="to-item-time">~{item.preparation_time}min</span>
@@ -317,7 +318,7 @@ export default function TakeOrder() {
                     </div>
                     <div className="to-ci-right">
                       <span className="to-ci-price">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatCOP(item.price * item.quantity)}
                       </span>
                       <button
                         type="button"
@@ -374,16 +375,16 @@ export default function TakeOrder() {
             <div className="to-totals">
               <div className="to-total-row">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>{formatCOP(cartTotal)}</span>
               </div>
               <div className="to-total-row to-total-tax">
                 <span>IVA (8%)</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>{formatCOP(tax)}</span>
               </div>
               <div className="to-total-divider" />
               <div className="to-total-row to-total-final">
                 <span>Total est.</span>
-                <span>${(cartTotal + tax).toFixed(2)}</span>
+                <span>{formatCOP(cartTotal + tax)}</span>
               </div>
             </div>
           )}

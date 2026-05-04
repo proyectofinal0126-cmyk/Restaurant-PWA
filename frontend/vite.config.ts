@@ -1,13 +1,26 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   server: {
-    host: '0.0.0.0',   // ← sin esto, Docker no expone el puerto
+    host: '0.0.0.0',
     port: 5173,
     watch: {
-      usePolling: true, // ← necesario en Windows + Docker para hot reload
+      usePolling: true,
+    },
+    proxy: {
+      // Redirige /api/* → http://backend:3001/api/*
+      // En local usa localhost:3001, en Docker usa el nombre del servicio
+      '/api': {
+        target: 'http://backend:3001',
+        changeOrigin: true,
+      },
+      // WebSocket
+      '/ws': {
+        target: 'ws://backend:3001',
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
   plugins: [react()],

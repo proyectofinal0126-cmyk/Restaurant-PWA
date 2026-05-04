@@ -1,3 +1,4 @@
+import { formatCOP } from '../../utils/constants';
 // ============================================================
 // frontend/src/pages/admin/Dashboard.tsx  →  /admin/dashboard
 //
@@ -12,7 +13,7 @@ import { useAdminStore } from '../../store/adminStore';
 import { getAdminStats } from '../../services/adminService';
 import '../../styles/admin.css';
 
-const fmtMoney = (v: number) => `$${v.toFixed(2)}`;
+const fmtMoney = (v: number) => formatCOP(v);
 
 // ── Barra horizontal simple en CSS puro ─────────────────────
 function BarChart({

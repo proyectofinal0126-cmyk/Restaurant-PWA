@@ -1,11 +1,14 @@
 // ============================================================
 // frontend/src/pages/admin/Settings.tsx  →  /admin/settings
 //
-// Propósito: Configuración global del restaurante.
-//   Nombre, dirección, impuestos, propina sugerida, moneda.
-//   Los valores se guardan en la BD y se usan en cálculos.
+// Configuración global del restaurante.
+// Nombre, dirección, impuestos, propina sugerida, moneda.
+//
+// El modo de operación (autoservicio/mesero/ambos) NO aparece
+// aquí — lo fija el equipo técnico en el .env al instalar.
 // ============================================================
 
+import { formatCOP } from '../../utils/constants';
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { getSettings, saveSettings } from '../../services/adminService';
@@ -18,7 +21,7 @@ const DEFAULT: RestaurantSettings = {
   name:           'RestaurantPWA',
   address:        '',
   phone:          '',
-  tax_rate:       19,
+  tax_rate:       8,
   tip_suggestion: 10,
   currency:       'COP',
   timezone:       'America/Bogota',
@@ -34,8 +37,8 @@ export default function Settings() {
   useEffect(() => {
     setLoading(true);
     getSettings()
-      .then(setSettings)
-      .catch(() => { /* usa defaults si no hay config guardada */ })
+      .then((s) => setSettings({ ...DEFAULT, ...s }))
+      .catch(() => { /* usa defaults */ })
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,8 +46,8 @@ export default function Settings() {
     setSaving(true);
     setError(null);
     try {
-      const saved = await saveSettings(settings);
-      setSettings(saved);
+      const result = await saveSettings(settings);
+      setSettings({ ...DEFAULT, ...result });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (e: unknown) {
@@ -130,20 +133,19 @@ export default function Settings() {
                   { min: 0, max: 30, step: 0.5 })}
               </div>
 
-              {/* Vista previa del cálculo */}
               <div className="settings-preview">
-                <p className="settings-preview-title">Vista previa con $100 de subtotal:</p>
+                <p className="settings-preview-title">Vista previa con $100.000 de subtotal:</p>
                 <div className="settings-preview-rows">
-                  <div className="spr-row"><span>Subtotal</span><span>$100.00</span></div>
+                  <div className="spr-row"><span>Subtotal</span><span>$ 100.000</span></div>
                   <div className="spr-row"><span>IVA ({settings.tax_rate}%)</span>
-                    <span>${(100 * settings.tax_rate / 100).toFixed(2)}</span></div>
+                    <span>{formatCOP((100 * settings.tax_rate / 100))}</span></div>
                   <div className="spr-row spr-total">
                     <span>Total</span>
-                    <span>${(100 + 100 * settings.tax_rate / 100).toFixed(2)}</span>
+                    <span>{formatCOP((100 + 100 * settings.tax_rate / 100))}</span>
                   </div>
                   <div className="spr-row spr-tip">
                     <span>Propina sugerida ({settings.tip_suggestion}%)</span>
-                    <span>+${(100 * settings.tip_suggestion / 100).toFixed(2)}</span>
+                    <span>+{formatCOP((100 * settings.tip_suggestion / 100))}</span>
                   </div>
                 </div>
               </div>

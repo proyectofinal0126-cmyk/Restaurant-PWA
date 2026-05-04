@@ -1,3 +1,4 @@
+import { formatCOP } from '../../utils/constants';
 // ============================================================
 // frontend/src/pages/admin/MenuMgmt.tsx  →  /admin/menu
 //
@@ -343,7 +344,7 @@ export default function MenuMgmt() {
                         <p className="alr-sub">{item.category_name} · ~{item.preparation_time}min</p>
                       </div>
                     </div>
-                    <div className="alr-price">${parseFloat(item.price as unknown as string).toFixed(2)}</div>
+                    <div className="alr-price">{formatCOP(parseFloat(item.price as unknown as string))}</div>
                     <div className="alr-meta">
                       <button
                         type="button"

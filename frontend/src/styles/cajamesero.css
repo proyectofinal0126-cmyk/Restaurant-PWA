@@ -62,6 +62,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   background: var(--c-green-soft); color: var(--c-green);
   border: 1px solid var(--c-green-border);
   padding: 4px 12px; border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 6px;
 }
 .cajam-refresh-btn, .cajam-exit-btn {
   min-height: 38px; padding: 0 12px; border-radius: 9px;
@@ -118,11 +119,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .cajam-empty p    { font-size: 16px; font-weight: 500; color: var(--c-muted); }
 .cajam-empty span { font-size: 13px; }
 
-/* Tabla de mesas */
-.cajam-table { display: flex; flex-direction: column; gap: 0; }
+.cajam-table { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
 .cajam-table-head {
   display: grid;
-  grid-template-columns: 140px 120px 1fr 140px 100px 120px;
+  grid-template-columns: 110px 120px 1fr 110px 100px 100px 100px;
   gap: 12px; padding: 8px 16px;
   font-size: 11px; font-weight: 600; color: var(--c-muted);
   text-transform: uppercase; letter-spacing: 0.5px;
@@ -130,13 +130,19 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .cajam-table-row {
   display: grid;
-  grid-template-columns: 140px 120px 1fr 140px 100px 120px;
+  grid-template-columns: 110px 120px 1fr 110px 100px 100px 100px;
   gap: 12px; align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(28,20,16,0.03);
-  transition: background 0.15s;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  transition: box-shadow .15s, border-color .15s;
 }
-.cajam-table-row:hover { background: rgba(28,20,16,0.03); }
+.cajam-table-row:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+  border-color: rgba(34,197,94,.2);
+}
 .col-right { text-align: right; }
 
 .mesa-badge {
@@ -544,12 +550,14 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .cajam-table-head, .cajam-table-row {
-    grid-template-columns: 100px 1fr 90px 100px;
+    grid-template-columns: 100px 1fr 90px 90px;
   }
   .cajam-table-head span:nth-child(2),
   .cajam-table-row span.cajam-section,
   .cajam-table-head span:nth-child(3),
-  .cajam-table-row span.cajam-waiter { display: none; }
+  .cajam-table-row span.cajam-waiter,
+  .cajam-table-head span:nth-child(5),
+  .cajam-table-row span.cajam-method { display: none; }
   .payment-methods { grid-template-columns: 1fr 1fr; }
 }
 /* ============================================================
@@ -563,7 +571,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   border-bottom: 1px solid rgba(255,255,255,.07);
 }
 .cajam-tab {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 7px;
   padding: 10px 18px;
   border: none; background: none; cursor: pointer;
   font-size: .88rem; font-weight: 600;
@@ -602,13 +610,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .mc-card {
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 12px;
-  background: rgba(255,255,255,.03);
+  background: var(--c-surface);
   overflow: hidden;
-  transition: border-color .2s;
+  transition: border-color .2s, box-shadow .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
 }
-.mc-card.ms-ready      { border-color: rgba(16,185,129,.3); }
-.mc-card.ms-bill       { border-color: rgba(245,158,11,.35); }
-.mc-card.ms-preparing  { border-color: rgba(99,102,241,.25); }
+.mc-card:hover {
+  box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+.mc-card.ms-ready      { border-color: rgba(16,185,129,.3);  background: rgba(16,185,129,.03); }
+.mc-card.ms-bill       { border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.03); }
+.mc-card.ms-preparing  { border-color: rgba(99,102,241,.25); background: rgba(99,102,241,.03); }
 
 .mc-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -630,6 +642,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   border-radius: 20px;
   background: rgba(255,255,255,.06);
   color: var(--text-secondary);
+  display: inline-flex; align-items: center; gap: 5px;
 }
 .mc-badge.ms-kitchen   { background: rgba(99,102,241,.15);  color: #a5b4fc; }
 .mc-badge.ms-preparing { background: rgba(139,92,246,.15);  color: #c4b5fd; }
@@ -643,11 +656,34 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   padding: 8px 14px 12px;
   border-top: 1px solid rgba(255,255,255,.05);
 }
-.mc-waiter { font-size: .8rem; color: var(--text-muted); margin: 0 0 8px; }
+.mc-waiter { font-size: .8rem; color: var(--text-muted); margin: 0 0 8px; display: flex; align-items: center; gap: 5px; }
 .mc-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
 .mc-item { font-size: .82rem; color: var(--text-secondary); display: flex; flex-direction: column; }
 .mc-item-note { font-size: .73rem; color: var(--text-muted); }
-.mc-total { font-size: .82rem; color: var(--text-secondary); margin-top: 8px; text-align: right; }
+
+.mc-breakdown {
+  display: flex; flex-direction: column; gap: 2px;
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid rgba(28,20,16,.06);
+}
+.mc-breakdown-row {
+  display: flex; justify-content: space-between;
+  font-size: .75rem; color: var(--c-muted, #98989D);
+}
+
+.mc-footer-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 8px; gap: 8px;
+}
+.mc-method-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .73rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px;
+  background: rgba(28,20,16,.06);
+  color: var(--c-muted, #98989D);
+  border: 1px solid rgba(28,20,16,.08);
+}
+.mc-total { font-size: .82rem; color: var(--text-secondary); text-align: right; }
 
 /* Notificación urgente de cuentas pendientes */
 .cajam-count-urgent {

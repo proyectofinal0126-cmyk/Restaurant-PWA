@@ -1,3 +1,4 @@
+import { formatCOP } from '../utils/constants';
 // ============================================================
 // frontend/src/pages/Checkout.tsx  →  /autoservicio/checkout
 //
@@ -22,9 +23,9 @@ import '../styles/checkout.css';
 type PaymentMethod = 'efectivo' | 'tarjeta' | 'transferencia';
 
 const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: string }[] = [
-  { value: 'efectivo',      label: 'Efectivo',      icon: '' },
-  { value: 'tarjeta',       label: 'Tarjeta',        icon: '' },
-  { value: 'transferencia', label: 'Transferencia',  icon: '' },
+  { value: 'efectivo',      label: 'Efectivo',      icon: '💵' },
+  { value: 'tarjeta',       label: 'Tarjeta',        icon: '💳' },
+  { value: 'transferencia', label: 'Transferencia',  icon: '📲' },
 ];
 
 export default function Checkout() {
@@ -118,7 +119,7 @@ export default function Checkout() {
                     )}
                   </div>
                   <span className="ci-price">
-                    ${(menuItem.price * quantity).toFixed(2)}
+                    {formatCOP(menuItem.price * quantity)}
                   </span>
                 </li>
               ))}
@@ -174,16 +175,16 @@ export default function Checkout() {
           <section className="checkout-totals">
             <div className="total-row">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{formatCOP(subtotal)}</span>
             </div>
             <div className="total-row total-row--tax">
               <span>Impuesto (8%)</span>
-              <span>${tax.toFixed(2)}</span>
+              <span>{formatCOP(tax)}</span>
             </div>
             <div className="total-divider" />
             <div className="total-row total-row--final">
               <span>Total estimado</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatCOP(total)}</span>
             </div>
             <p className="total-note">* El total final lo confirma caja</p>
           </section>

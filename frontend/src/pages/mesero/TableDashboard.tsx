@@ -22,6 +22,7 @@ import { getTables }           from '../../services/waiterService';
 import DeliveryConfirm         from '../../components/waiter/DeliveryConfirm';
 import BillRequestModal        from '../../components/waiter/BillRequestModal';
 import OrderStatus             from '../../components/waiter/OrderStatus';
+import OrderDetailModal        from '../../components/waiter/OrderDetailModal';
 import type { Table, TableStatus } from '../../types/table';
 import '../../styles/mesero.css';
 
@@ -41,10 +42,11 @@ interface TableCardProps {
   onTakeOrder:   (table: Table) => void;
   onDeliver:     (table: Table) => void;
   onRequestBill: (table: Table) => void;
+  onViewDetail:  (table: Table) => void;
 }
 
 const TableCard = memo(function TableCard({
-  table, onTakeOrder, onDeliver, onRequestBill,
+  table, onTakeOrder, onDeliver, onRequestBill, onViewDetail,
 }: TableCardProps) {
   const cfg          = TABLE_STATUS_CONFIG[table.status];
   const isAvailable  = table.status === 'available';
@@ -93,6 +95,18 @@ const TableCard = memo(function TableCard({
         <div className="tc-order-info">
           <span className="tc-order-num">{table.current_order_number ?? '—'}</span>
           <OrderStatus status={table.current_order_status} />
+          <button
+            type="button"
+            className="tc-btn-detail"
+            onClick={() => onViewDetail(table)}
+            aria-label={`Ver detalle del pedido en mesa ${table.number}`}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <rect x="1" y="2.5" width="10" height="7.5" rx="1.2" stroke="currentColor" strokeWidth="1.1"/>
+              <path d="M3.5 5.5h5M3.5 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
+            </svg>
+            Ver pedido
+          </button>
         </div>
       )}
 
@@ -197,6 +211,7 @@ export default function TableDashboard() {
 
   const [deliverModal,     setDeliverModal]     = useState<Table | null>(null);
   const [billModal,        setBillModal]         = useState<Table | null>(null);
+  const [detailModal,      setDetailModal]       = useState<Table | null>(null);
 
   // Carga inicial
   useEffect(() => {
@@ -218,6 +233,11 @@ export default function TableDashboard() {
     setDeliverModal(null);
     getTables().then(setTables).catch(() => {});
   }, [setTables]);
+
+  // Ver detalle de pedido
+  const handleViewDetail = useCallback((table: Table) => {
+    setDetailModal(table);
+  }, []);
 
   // Cuenta solicitada exitosamente → refrescar mesas
   const handleBillSuccess = useCallback(() => {
@@ -264,7 +284,7 @@ export default function TableDashboard() {
           </div>
           {stats.ready > 0 && (
             <div className="stat-chip chip-emerald">
-              <span>{stats.ready}</span> listas 
+              <span>{stats.ready}</span> listas 🎉
             </div>
           )}
           {stats.waitingBill > 0 && (
@@ -341,6 +361,7 @@ export default function TableDashboard() {
               onTakeOrder={handleTakeOrder}
               onDeliver={(t) => setDeliverModal(t)}
               onRequestBill={(t) => setBillModal(t)}
+              onViewDetail={handleViewDetail}
             />
           ))}
         </main>
@@ -354,6 +375,16 @@ export default function TableDashboard() {
           tableNumber={deliverModal.number}
           onSuccess={handleDeliverSuccess}
           onCancel={() => setDeliverModal(null)}
+        />
+      )}
+
+      {/* Modal de detalle del pedido */}
+      {detailModal && detailModal.current_order_id && (
+        <OrderDetailModal
+          orderId={detailModal.current_order_id}
+          orderNumber={detailModal.current_order_number ?? '—'}
+          tableNumber={detailModal.number}
+          onClose={() => setDetailModal(null)}
         />
       )}
 

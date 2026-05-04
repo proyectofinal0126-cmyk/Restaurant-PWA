@@ -1,10 +1,15 @@
 // ============================================================
-// frontend/src/App.tsx  —  Fase 8 (actualizado)
-// NUEVAS RUTAS: /admin/dashboard, /admin/menu, /admin/users,
-//               /admin/reports, /admin/settings
+// frontend/src/App.tsx
+//
+// Al montar, llama loadConfig() para leer operationMode desde el
+// servidor. Las rutas de autoservicio y mesero solo se registran
+// si el restaurante tiene ese módulo activo.
 // ============================================================
 
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppStore } from './store/appStore';
+
 import Home             from './pages/Home';
 import RoleSelectPage   from './pages/RoleSelectPage';
 import LoginPage        from './pages/LoginPage';
@@ -48,38 +53,49 @@ const Unauthorized = () => (
 );
 
 export default function App() {
+  const { loadConfig, operationMode } = useAppStore();
+
+  // Leer el modo de operación del servidor al arrancar
+  useEffect(() => { loadConfig(); }, [loadConfig]);
+
+  const hasAutoservicio = operationMode === 'autoservicio' || operationMode === 'ambos';
+  const hasMesero       = operationMode === 'mesero'       || operationMode === 'ambos';
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* Fase 2 */}
+        {/* Siempre disponibles */}
         <Route path="/"            element={<Home />} />
         <Route path="/select-role" element={<RoleSelectPage />} />
         <Route path="/login"       element={<LoginPage />} />
 
-        {/* Fase 3 */}
-        <Route path="/autoservicio/menu"        element={<ClientMenu />} />
-        <Route path="/autoservicio/checkout"    element={<Checkout />} />
-        <Route path="/autoservicio/tracker/:id" element={<OrderTracker />} />
+        {/* ── Módulo Autoservicio ── */}
+        {hasAutoservicio && (
+          <>
+            <Route path="/autoservicio/menu"        element={<ClientMenu />} />
+            <Route path="/autoservicio/checkout"    element={<Checkout />} />
+            <Route path="/autoservicio/tracker/:id" element={<OrderTracker />} />
+            <Route path="/autoservicio/caja"
+              element={<ProtectedRoute allowedRoles={['caja','admin']}><CajaAutoservicio /></ProtectedRoute>} />
+          </>
+        )}
 
-        {/* Fase 4 */}
-        <Route path="/autoservicio/caja"
-          element={<ProtectedRoute allowedRoles={['caja','admin']}><CajaAutoservicio /></ProtectedRoute>} />
+        {/* ── Módulo Mesero ── */}
+        {hasMesero && (
+          <>
+            <Route path="/mesero/dashboard"
+              element={<ProtectedRoute allowedRoles={['mesero','admin']}><TableDashboard /></ProtectedRoute>} />
+            <Route path="/mesero/orden/:tableId"
+              element={<ProtectedRoute allowedRoles={['mesero','admin']}><TakeOrder /></ProtectedRoute>} />
+            <Route path="/caja/dashboard"
+              element={<ProtectedRoute allowedRoles={['caja','admin']}><CajaMesero /></ProtectedRoute>} />
+          </>
+        )}
 
-        {/* Fase 5 */}
+        {/* ── Siempre disponibles: Cocina + Admin ── */}
         <Route path="/cocina/kds"
           element={<ProtectedRoute allowedRoles={['cocina','admin']}><KDS /></ProtectedRoute>} />
 
-        {/* Fase 6 */}
-        <Route path="/mesero/dashboard"
-          element={<ProtectedRoute allowedRoles={['mesero','admin']}><TableDashboard /></ProtectedRoute>} />
-        <Route path="/mesero/orden/:tableId"
-          element={<ProtectedRoute allowedRoles={['mesero','admin']}><TakeOrder /></ProtectedRoute>} />
-
-        {/* Fase 7 */}
-        <Route path="/caja/dashboard"
-          element={<ProtectedRoute allowedRoles={['caja','admin']}><CajaMesero /></ProtectedRoute>} />
-
-        {/* Fase 8 — Admin Dashboard */}
         <Route path="/admin/dashboard"
           element={<ProtectedRoute allowedRoles={['admin']}><Dashboard /></ProtectedRoute>} />
         <Route path="/admin/menu"

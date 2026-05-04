@@ -1,16 +1,30 @@
+// ============================================================
+// frontend/src/pages/Home.tsx
+//
+// Muestra las tarjetas de modo de operación disponibles según
+// operationMode (configurado por el admin en BD).
+//
+//   'autoservicio' → solo tarjeta Autoservicio, entra directo
+//   'mesero'       → solo tarjeta Mesero, entra directo
+//   'ambos'        → ambas tarjetas, usuario elige
+// ============================================================
+
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import type { Mode } from '../store/appStore';
 import '../styles/home.css';
 
 export default function Home() {
-  const navigate = useNavigate();
-  const setMode  = useAppStore((s) => s.setMode);
+  const navigate       = useNavigate();
+  const { setMode, operationMode } = useAppStore();
 
   function handleSelect(mode: Mode) {
     setMode(mode);
     navigate('/select-role');
   }
+
+  const showAutoservicio = operationMode === 'autoservicio' || operationMode === 'ambos';
+  const showMesero       = operationMode === 'mesero'       || operationMode === 'ambos';
 
   return (
     <div className="home-root">
@@ -54,6 +68,7 @@ export default function Home() {
 
         <div className="mode-grid">
 
+          {showAutoservicio && (
           <button className="mode-card card-orange" onClick={() => handleSelect('autoservicio')}>
             <div className="card-bg-glow glow-o" />
             <div className="card-top">
@@ -85,7 +100,9 @@ export default function Home() {
               </svg>
             </div>
           </button>
+          )}
 
+          {showMesero && (
           <button className="mode-card card-blue" onClick={() => handleSelect('mesero')}>
             <div className="card-bg-glow glow-b" />
             <div className="card-top">
@@ -117,10 +134,11 @@ export default function Home() {
               </svg>
             </div>
           </button>
+          )}
 
         </div>
 
-        <footer className="home-foot">RestaurantPWA v1.0 · Fase 2</footer>
+        <footer className="home-foot">RestaurantPWA · Sistema de Gestión</footer>
       </div>
     </div>
   );

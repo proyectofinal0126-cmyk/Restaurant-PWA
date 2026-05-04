@@ -1,3 +1,4 @@
+import { formatCOP } from '../../utils/constants';
 // ============================================================
 // frontend/src/pages/cashier/CajaMesero.tsx
 //
@@ -33,14 +34,61 @@ import '../../styles/orderhistory.css';
 type FlowStep = 'none' | 'bill' | 'payment' | 'release';
 type ActivePanel = 'monitor' | 'cobro';
 
-// ── Labels y colores por estado de orden ───────────────────
-const ORDER_STATUS_LABELS: Record<string, { label: string; cls: string; icon: string }> = {
-  sent_to_kitchen:  { label: 'En cocina',    cls: 'ms-kitchen',   icon: '🍳' },
-  in_preparation:   { label: 'Preparando',   cls: 'ms-preparing', icon: '👨‍🍳' },
-  ready_for_pickup: { label: 'Listo',        cls: 'ms-ready',     icon: '✅' },
-  delivered:        { label: 'Entregado',    cls: 'ms-delivered', icon: '🛎️' },
-  waiting_bill:     { label: 'Pide cuenta',  cls: 'ms-bill',      icon: '🧾' },
-  completed:        { label: 'Completado',   cls: 'ms-done',      icon: '✔️' },
+// ── Iconos SVG por estado ───────────────────────────────────
+const STATUS_ICONS: Record<string, React.ReactNode> = {
+  sent_to_kitchen: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <path d="M2 11V6a4.5 4.5 0 019 0v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M1 11h11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M6.5 3V1.5M4.5 3.8L3.5 2.8M8.5 3.8L9.5 2.8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  in_preparation: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3"/>
+      <path d="M6.5 4v2.5l1.5 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+    </svg>
+  ),
+  ready_for_pickup: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3"/>
+      <path d="M4 6.5l2 2 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+    </svg>
+  ),
+  delivered: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <path d="M1.5 9.5l2-2 2 2 4-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11.5 4.5l-4 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+    </svg>
+  ),
+  waiting_bill: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <rect x="2" y="1.5" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+      <path d="M4.5 4.5h4M4.5 6.5h4M4.5 8.5h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  completed: (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+      <path d="M2 7l3 3 6-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>
+  ),
+};
+
+const ICON_WAITER = (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <circle cx="6" cy="3.5" r="2" stroke="currentColor" strokeWidth="1.2"/>
+    <path d="M1.5 10.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>
+);
+
+// ── Labels por estado ───────────────────────────────────────
+const ORDER_STATUS_LABELS: Record<string, { label: string; cls: string }> = {
+  sent_to_kitchen:  { label: 'En cocina',   cls: 'ms-kitchen'   },
+  in_preparation:   { label: 'Preparando',  cls: 'ms-preparing' },
+  ready_for_pickup: { label: 'Listo',       cls: 'ms-ready'     },
+  delivered:        { label: 'Entregado',   cls: 'ms-delivered' },
+  waiting_bill:     { label: 'Pide cuenta', cls: 'ms-bill'      },
+  completed:        { label: 'Completado',  cls: 'ms-done'      },
 };
 
 function serviceDuration(createdAt: string): string {
@@ -52,7 +100,7 @@ function serviceDuration(createdAt: string): string {
 // ── Tarjeta del panel monitor ───────────────────────────────
 function MonitorCard({ order }: { order: MonitorOrder }) {
   const [expanded, setExpanded] = useState(false);
-  const st = ORDER_STATUS_LABELS[order.status] ?? { label: order.status, cls: '', icon: '🔄' };
+  const st = ORDER_STATUS_LABELS[order.status] ?? { label: order.status, cls: '' };
 
   return (
     <div className={`mc-card ${st.cls}`}>
@@ -64,16 +112,32 @@ function MonitorCard({ order }: { order: MonitorOrder }) {
           )}
         </div>
         <div className="mc-right">
-          <span className={`mc-badge ${st.cls}`}>{st.icon} {st.label}</span>
+          <span className={`mc-badge ${st.cls}`}>
+            {STATUS_ICONS[order.status]}
+            {st.label}
+          </span>
           <span className="mc-time">{serviceDuration(order.createdAt)}</span>
-          <span className="mc-expand">{expanded ? '▲' : '▼'}</span>
+          <span className="mc-expand">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              {expanded
+                ? <path d="M2 7.5l3.5-3.5 3.5 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                : <path d="M2 3.5l3.5 3.5 3.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              }
+            </svg>
+          </span>
         </div>
       </div>
       {expanded && (
         <div className="mc-body">
+          {/* Mesero */}
           {order.waiterName && (
-            <p className="mc-waiter">👤 {order.waiterName}</p>
+            <p className="mc-waiter">
+              {ICON_WAITER}
+              {order.waiterName}
+            </p>
           )}
+
+          {/* Items */}
           {order.items.length > 0 && (
             <ul className="mc-items">
               {order.items.map((it, i) => (
@@ -84,8 +148,47 @@ function MonitorCard({ order }: { order: MonitorOrder }) {
               ))}
             </ul>
           )}
-          <div className="mc-total">
-            Total: <strong>${parseFloat(String(order.total)).toFixed(2)}</strong>
+
+          {/* Desglose de totales */}
+          <div className="mc-breakdown">
+            <span className="mc-breakdown-row">
+              <span>Subtotal</span>
+              <span>{formatCOP(parseFloat(String(order.subtotal)))}</span>
+            </span>
+            {parseFloat(String(order.tax)) > 0 && (
+              <span className="mc-breakdown-row">
+                <span>Impuesto</span>
+                <span>{formatCOP(parseFloat(String(order.tax)))}</span>
+              </span>
+            )}
+            {parseFloat(String(order.tip)) > 0 && (
+              <span className="mc-breakdown-row">
+                <span>Propina</span>
+                <span>{formatCOP(parseFloat(String(order.tip)))}</span>
+              </span>
+            )}
+          </div>
+
+          <div className="mc-footer-row">
+            {/* Método de pago (cuando el mesero ya lo registró) */}
+            {order.paymentMethod && (
+              <span className="mc-method-chip">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                  <rect x="1" y="2.5" width="9" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
+                  <path d="M1 5h9" stroke="currentColor" strokeWidth="1.2"/>
+                </svg>
+                {{
+                  efectivo:        'Efectivo',
+                  tarjeta_debito:  'Débito',
+                  tarjeta_credito: 'Crédito',
+                  transferencia:   'Transferencia',
+                  tarjeta:         'Tarjeta',
+                }[order.paymentMethod] ?? order.paymentMethod}
+              </span>
+            )}
+            <div className="mc-total">
+              Total: <strong>{formatCOP(parseFloat(String(order.total)))}</strong>
+            </div>
           </div>
         </div>
       )}
@@ -160,7 +263,11 @@ export default function CajaMesero() {
         <div className="cajam-header-right">
           {waitingTables.length > 0 && (
             <span className="cajam-count-pill cajam-count-urgent">
-              🧾 {waitingTables.length} {waitingTables.length === 1 ? 'cuenta' : 'cuentas'} pendiente{waitingTables.length > 1 ? 's' : ''}
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="2" y="1.5" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M4.5 4.5h4M4.5 6.5h4M4.5 8.5h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+              {waitingTables.length} {waitingTables.length === 1 ? 'cuenta' : 'cuentas'} pendiente{waitingTables.length > 1 ? 's' : ''}
             </span>
           )}
           <button
@@ -200,7 +307,11 @@ export default function CajaMesero() {
           className={`cajam-tab ${activePanel === 'monitor' ? 'cajam-tab--active' : ''}`}
           onClick={() => setActivePanel('monitor')}
         >
-          📡 Monitor de órdenes
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="1" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M4 13h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          Monitor de órdenes
           {activeMonitor.length > 0 && (
             <span className="cajam-tab-badge">{activeMonitor.length}</span>
           )}
@@ -210,7 +321,11 @@ export default function CajaMesero() {
           className={`cajam-tab ${activePanel === 'cobro' ? 'cajam-tab--active' : ''}`}
           onClick={() => setActivePanel('cobro')}
         >
-          🧾 Cobro de cuentas
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M4.5 5h5M4.5 7.5h5M4.5 10h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          Cobro de cuentas
           {waitingTables.length > 0 && (
             <span className="cajam-tab-badge cajam-tab-badge--urgent">{waitingTables.length}</span>
           )}
@@ -297,7 +412,7 @@ export default function CajaMesero() {
                       ) : '—'}
                     </span>
                     <span className="cajam-total col-right">
-                      ${parseFloat(String(table.total)).toFixed(2)}
+                      {formatCOP(parseFloat(String(table.total)))}
                     </span>
                     <span className="cajam-action col-right">
                       <button

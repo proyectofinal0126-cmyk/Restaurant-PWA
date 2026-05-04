@@ -1,3 +1,4 @@
+import { formatCOP } from '../utils/constants';
 // ============================================================
 // frontend/src/pages/OrderTracker.tsx  →  /autoservicio/tracker/:id
 // FIX: import CSS en lowercase para compatibilidad Linux/Docker
@@ -169,14 +170,14 @@ export default function OrderTracker() {
                 <span className="ti-qty">{item.quantity}×</span>
                 <span className="ti-name">{item.name}</span>
                 {/* FIX: price puede venir como string de BD */}
-                <span className="ti-price">${(parseFloat(item.price as unknown as string) * item.quantity).toFixed(2)}</span>
+                <span className="ti-price">{formatCOP(parseFloat(item.price as unknown as string) * item.quantity)}</span>
               </li>
             ))}
           </ul>
         ) : <p className="tracker-items-empty">Cargando items...</p>}
         <div className="tracker-total">
           <span>Total</span>
-          <span>${parseFloat(order.total as unknown as string).toFixed(2)}</span>
+          <span>{formatCOP(parseFloat(order.total as unknown as string))}</span>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import { formatCOP } from '../utils/constants';
 // ============================================================
 // frontend/src/pages/ClientMenu.tsx  →  /autoservicio/menu
 //
@@ -203,7 +204,7 @@ export default function ClientMenu() {
                       )}
                       <div className="item-footer">
                         <span className="item-price">
-                          ${item.price.toFixed(2)}
+                          {formatCOP(item.price)}
                         </span>
                         <button
                           className={`item-add-btn ${addedIds.has(item.id) ? 'item-add-btn--added' : ''}`}

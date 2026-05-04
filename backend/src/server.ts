@@ -13,7 +13,8 @@ import menuRoutes    from './routes/menu';
 import tableRoutes   from './routes/tables';
 import orderRoutes   from './routes/orders';
 import cashierRoutes from './routes/cashier';
-import adminRoutes   from './routes/admin';      // ← NUEVO Fase 8
+import adminRoutes   from './routes/admin';
+import configRoutes  from './routes/config';     // ← Módulos activos
 import devRoutes     from './routes/dev';
 
 import { initWebSocket } from './websocket/handlers';
@@ -36,7 +37,8 @@ app.use('/api/menu',    menuRoutes);
 app.use('/api/tables',  tableRoutes);
 app.use('/api/orders',  orderRoutes);
 app.use('/api/cashier', cashierRoutes);
-app.use('/api/admin',   adminRoutes);      // ← NUEVO Fase 8
+app.use('/api/admin',   adminRoutes);
+app.use('/api/config',  configRoutes);     // ← módulos activos (público)      // ← NUEVO Fase 8
 
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api/dev', devRoutes);
