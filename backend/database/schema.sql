@@ -1,11 +1,12 @@
 -- ============================================================
 -- backend/database/schema.sql
 -- FIX #6: Agrega SEQUENCE para order_number atómico
+-- FIX #7: Agrega UNIQUE constraints en menu_categories y
+--         menu_items para que ON CONFLICT DO NOTHING funcione
+--         correctamente en seeds.sql y no duplique datos.
 -- ============================================================
 
 -- ── Secuencia para order_number único y atómico ──────────────
--- FIX race condition: nextval() es atómico en PostgreSQL.
--- Dos transacciones concurrentes nunca obtendrán el mismo número.
 CREATE SEQUENCE IF NOT EXISTS order_number_seq START 1;
 
 -- ── Roles ────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ CREATE TABLE users (
   updated_at    TIMESTAMP DEFAULT NOW()
 );
 
--- ── Mesas (solo flujo Con Mesero) ────────────────────────────
+-- ── Mesas ────────────────────────────────────────────────────
 CREATE TABLE tables (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   number     INTEGER NOT NULL UNIQUE,
@@ -43,9 +44,10 @@ CREATE TABLE tables (
 );
 
 -- ── Categorías de menú ───────────────────────────────────────
+-- FIX #7: UNIQUE en 'name' para que ON CONFLICT funcione
 CREATE TABLE menu_categories (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        VARCHAR(100) NOT NULL,
+  name        VARCHAR(100) NOT NULL UNIQUE,   -- ← FIX: agregado UNIQUE
   description TEXT,
   icon        VARCHAR(255),
   image_url   TEXT,
@@ -55,10 +57,11 @@ CREATE TABLE menu_categories (
 );
 
 -- ── Items del menú ───────────────────────────────────────────
+-- FIX #7: UNIQUE en 'name' para que ON CONFLICT funcione
 CREATE TABLE menu_items (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   category_id      UUID NOT NULL REFERENCES menu_categories(id),
-  name             VARCHAR(100) NOT NULL,
+  name             VARCHAR(100) NOT NULL UNIQUE,   -- ← FIX: agregado UNIQUE
   description      TEXT,
   image_url        TEXT,
   price            DECIMAL(10,2) NOT NULL,
@@ -73,10 +76,7 @@ CREATE TABLE menu_items (
 CREATE TABLE orders (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_number      VARCHAR(10) UNIQUE NOT NULL,
-
-  -- NULL en autoservicio, UUID en flujo Con Mesero
   table_id          UUID REFERENCES tables(id) ON DELETE SET NULL,
-
   customer_id       UUID REFERENCES users(id),
   waiter_id         UUID REFERENCES users(id),
   cashier_id        UUID REFERENCES users(id),
@@ -93,7 +93,7 @@ CREATE TABLE orders (
   notes             TEXT,
   created_at        TIMESTAMP DEFAULT NOW(),
   updated_at        TIMESTAMP DEFAULT NOW(),
-  validated_at      TIMESTAMP,        -- FIX #5: se actualiza en payment_confirmed/pending_validation
+  validated_at      TIMESTAMP,
   sent_to_kitchen_at TIMESTAMP,
   ready_at          TIMESTAMP,
   delivered_at      TIMESTAMP,
