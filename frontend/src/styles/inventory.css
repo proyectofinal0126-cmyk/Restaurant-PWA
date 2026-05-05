@@ -1,0 +1,200 @@
+/* ============================================================
+   INVENTARIO (Bodega) — Fase 9
+   Usa las mismas variables CSS de admin.css (--a-*)
+   Acento teal/esmeralda para diferenciar del índigo del admin
+   ============================================================ */
+
+/* Variables propias del módulo (extiende admin.css) */
+:root {
+  --inv-teal:        #2dd4bf;
+  --inv-teal-soft:   rgba(45,212,191,0.12);
+  --inv-teal-border: rgba(45,212,191,0.28);
+  --inv-ok:          #22c55e;
+  --inv-low:         #f59e0b;
+  --inv-crit:        #ef4444;
+  --inv-oot:         #6b7280;
+}
+
+/* ── Tabla principal de ingredientes ── */
+.inv-table-wrap {
+  background: var(--a-surface);
+  border: 1px solid var(--a-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inv-table thead th {
+  background: var(--a-surface-2);
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--a-muted);
+  text-align: left;
+  border-bottom: 1px solid var(--a-border);
+  white-space: nowrap;
+}
+
+.inv-table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(28,20,16,0.05);
+  font-size: 13px;
+  color: var(--a-text);
+  vertical-align: middle;
+}
+
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table tbody tr:hover { background: var(--a-surface-2); }
+
+/* ── Badges de estado ── */
+.stock-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.stock-badge--ok    { background: rgba(34,197,94,0.12);  color: var(--inv-ok);   border: 1px solid rgba(34,197,94,0.25); }
+.stock-badge--bajo  { background: rgba(245,158,11,0.12); color: var(--inv-low);  border: 1px solid rgba(245,158,11,0.25); }
+.stock-badge--crit  { background: rgba(239,68,68,0.12);  color: var(--inv-crit); border: 1px solid rgba(239,68,68,0.25); }
+.stock-badge--oot   { background: rgba(107,114,128,0.1); color: var(--inv-oot);  border: 1px solid rgba(107,114,128,0.2); }
+
+/* ── Banner de alertas ── */
+.low-stock-banner {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px;
+}
+.low-stock-banner .lsb-icon { font-size: 18px; flex-shrink: 0; }
+.low-stock-banner .lsb-text { flex: 1; color: var(--a-text); }
+.low-stock-banner .lsb-count {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 18px; font-weight: 900;
+  color: var(--inv-low);
+}
+.low-stock-banner .lsb-critical { color: var(--inv-crit); }
+
+/* ── Filtros de búsqueda ── */
+.inv-filters {
+  display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;
+}
+
+/* ── Tarjetas KPI ── */
+.inv-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.inv-kpi-card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-border);
+  border-radius: 12px; padding: 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.inv-kpi-card.kpi-teal { border-color: var(--inv-teal-border); }
+.inv-kpi-card.kpi-teal .inv-kpi-val { color: var(--inv-teal); }
+.inv-kpi-label { font-size: 11px; color: var(--a-muted); }
+.inv-kpi-val {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 28px; font-weight: 900; line-height: 1;
+  letter-spacing: -0.5px; color: var(--a-text);
+}
+
+/* ── Historial de movimientos ── */
+.mov-type-badge {
+  display: inline-block;
+  padding: 2px 8px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.mov-type-badge--entrada  { background: rgba(34,197,94,0.1);  color: #16a34a; }
+.mov-type-badge--salida   { background: rgba(239,68,68,0.1);  color: #dc2626; }
+.mov-type-badge--ajuste   { background: rgba(99,102,241,0.1); color: #6366f1; }
+.mov-type-badge--consumo_turno { background: rgba(245,158,11,0.1); color: #d97706; }
+
+.mov-qty-pos { color: var(--inv-ok);   font-weight: 700; }
+.mov-qty-neg { color: var(--inv-crit); font-weight: 700; }
+
+/* ── Retiro de turno (cocinero) ── */
+.withdrawal-card {
+  background: var(--inv-teal-soft);
+  border: 1px solid var(--inv-teal-border);
+  border-radius: 14px; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.wd-header { display: flex; align-items: center; justify-content: space-between; }
+.wd-title {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 15px; font-weight: 800; color: var(--inv-teal);
+}
+.wd-status-open   { color: var(--inv-teal); font-size: 12px; font-weight: 600; }
+.wd-status-closed { color: var(--a-muted);  font-size: 12px; }
+
+.wd-items { display: flex; flex-direction: column; gap: 6px; }
+.wd-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; background: var(--a-surface);
+  border-radius: 8px; font-size: 13px;
+}
+.wd-item-name { font-weight: 600; color: var(--a-text); }
+.wd-item-qty  { color: var(--a-muted); font-size: 12px; }
+
+/* ── Modal de retiro (WithdrawalForm) ── */
+.wd-form-item {
+  display: grid;
+  grid-template-columns: 1fr auto 80px auto;
+  align-items: center; gap: 8px;
+  padding: 8px; background: var(--a-surface-2);
+  border-radius: 8px;
+}
+
+/* ── Spinner ── */
+.inv-spinner {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--inv-teal-soft);
+  border-top-color: var(--inv-teal);
+  animation: invSpin 0.8s linear infinite;
+}
+@keyframes invSpin { to { transform: rotate(360deg); } }
+
+/* ── Empty state ── */
+.inv-empty {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding: 48px; color: var(--a-dim);
+  font-size: 14px; text-align: center;
+}
+
+/* ── Botón teal ── */
+.admin-btn-teal {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 10px;
+  background: var(--inv-teal);
+  border: none; color: #fff;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 13px; font-weight: 800;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.admin-btn-teal:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.admin-btn-teal:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Recetas ── */
+.recipe-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-bottom: 1px solid var(--a-border);
+  font-size: 13px;
+}
+.recipe-row:last-child { border-bottom: none; }
+.recipe-ingr-name { flex: 1; font-weight: 500; }
+.recipe-qty       { font-family: 'Cabinet Grotesk', sans-serif; font-size: 14px; font-weight: 700; }
+
+@media (max-width: 768px) {
+  .inv-kpi-grid { grid-template-columns: 1fr 1fr; }
+  .inv-filters  { flex-direction: column; }
+  .inv-table-wrap { overflow-x: auto; }
+}

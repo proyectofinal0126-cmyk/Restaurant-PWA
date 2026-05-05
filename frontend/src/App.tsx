@@ -1,9 +1,10 @@
 // ============================================================
-// frontend/src/App.tsx
+// frontend/src/App.tsx  —  Fase 9 (actualizado)
 //
-// Al montar, llama loadConfig() para leer operationMode desde el
-// servidor. Las rutas de autoservicio y mesero solo se registran
-// si el restaurante tiene ese módulo activo.
+// CAMBIOS vs Fase 8:
+//   + Rutas admin: /inventario, /proveedores, /recetas, /inventario/movimientos
+//   + Ruta cocina: /cocina/bodega
+//   - Eliminado import de TableValidator.tsx (no estaba en ninguna ruta)
 // ============================================================
 
 import { useEffect } from 'react';
@@ -40,6 +41,13 @@ import UsersMgmt        from './pages/admin/UsersMgmt';
 import Reports          from './pages/admin/Reports';
 import Settings         from './pages/admin/Settings';
 
+// Fase 9 — Inventario
+import InventoryDashboard from './pages/admin/InventoryDashboard';
+import SupplierManager    from './pages/admin/SupplierManager';
+import RecipeEditor       from './pages/admin/RecipeEditor';
+import MovementsLog       from './pages/admin/MovementsLog';
+import BodegaView         from './pages/cocina/BodegaView';
+
 const Unauthorized = () => (
   <div style={{
     minHeight: '100svh', background: '#080810', color: '#f0ece6',
@@ -55,7 +63,6 @@ const Unauthorized = () => (
 export default function App() {
   const { loadConfig, operationMode } = useAppStore();
 
-  // Leer el modo de operación del servidor al arrancar
   useEffect(() => { loadConfig(); }, [loadConfig]);
 
   const hasAutoservicio = operationMode === 'autoservicio' || operationMode === 'ambos';
@@ -92,10 +99,13 @@ export default function App() {
           </>
         )}
 
-        {/* ── Siempre disponibles: Cocina + Admin ── */}
+        {/* ── Cocina ── */}
         <Route path="/cocina/kds"
           element={<ProtectedRoute allowedRoles={['cocina','admin']}><KDS /></ProtectedRoute>} />
+        <Route path="/cocina/bodega"
+          element={<ProtectedRoute allowedRoles={['cocina','admin']}><BodegaView /></ProtectedRoute>} />
 
+        {/* ── Admin — Fases 8 ── */}
         <Route path="/admin/dashboard"
           element={<ProtectedRoute allowedRoles={['admin']}><Dashboard /></ProtectedRoute>} />
         <Route path="/admin/menu"
@@ -106,6 +116,16 @@ export default function App() {
           element={<ProtectedRoute allowedRoles={['admin']}><Reports /></ProtectedRoute>} />
         <Route path="/admin/settings"
           element={<ProtectedRoute allowedRoles={['admin']}><Settings /></ProtectedRoute>} />
+
+        {/* ── Admin — Fase 9: Inventario ── */}
+        <Route path="/admin/inventario"
+          element={<ProtectedRoute allowedRoles={['admin']}><InventoryDashboard /></ProtectedRoute>} />
+        <Route path="/admin/inventario/movimientos"
+          element={<ProtectedRoute allowedRoles={['admin']}><MovementsLog /></ProtectedRoute>} />
+        <Route path="/admin/proveedores"
+          element={<ProtectedRoute allowedRoles={['admin']}><SupplierManager /></ProtectedRoute>} />
+        <Route path="/admin/recetas"
+          element={<ProtectedRoute allowedRoles={['admin']}><RecipeEditor /></ProtectedRoute>} />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*"             element={<Navigate to="/" replace />} />

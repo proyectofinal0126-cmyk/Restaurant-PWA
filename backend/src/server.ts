@@ -1,6 +1,6 @@
 // ============================================================
-// backend/src/server.ts  —  Fase 8 (actualizado)
-// NUEVO: /api/admin → adminRoutes
+// backend/src/server.ts  —  Fase 9 (actualizado)
+// NUEVO: /api/inventory → inventoryRoutes (ingredients, suppliers, recipes, withdrawals)
 // ============================================================
 
 import express          from 'express';
@@ -8,14 +8,15 @@ import cors             from 'cors';
 import { createServer } from 'http';
 import dotenv           from 'dotenv';
 
-import authRoutes    from './routes/auth';
-import menuRoutes    from './routes/menu';
-import tableRoutes   from './routes/tables';
-import orderRoutes   from './routes/orders';
-import cashierRoutes from './routes/cashier';
-import adminRoutes   from './routes/admin';
-import configRoutes  from './routes/config';     // ← Módulos activos
-import devRoutes     from './routes/dev';
+import authRoutes      from './routes/auth';
+import menuRoutes      from './routes/menu';
+import tableRoutes     from './routes/tables';
+import orderRoutes     from './routes/orders';
+import cashierRoutes   from './routes/cashier';
+import adminRoutes     from './routes/admin';
+import configRoutes    from './routes/config';
+import inventoryRoutes from './routes/inventory';   // ← NUEVO Fase 9
+import devRoutes       from './routes/dev';
 
 import { initWebSocket } from './websocket/handlers';
 import pool from './utils/db';
@@ -32,19 +33,19 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/auth',    authRoutes);
-app.use('/api/menu',    menuRoutes);
-app.use('/api/tables',  tableRoutes);
-app.use('/api/orders',  orderRoutes);
-app.use('/api/cashier', cashierRoutes);
-app.use('/api/admin',   adminRoutes);
-app.use('/api/config',  configRoutes);     // ← módulos activos (público)      // ← NUEVO Fase 8
+app.use('/api/auth',      authRoutes);
+app.use('/api/menu',      menuRoutes);
+app.use('/api/tables',    tableRoutes);
+app.use('/api/orders',    orderRoutes);
+app.use('/api/cashier',   cashierRoutes);
+app.use('/api/admin',     adminRoutes);
+app.use('/api/config',    configRoutes);
+app.use('/api/inventory', inventoryRoutes);   // ← NUEVO Fase 9
 
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api/dev', devRoutes);
 }
 
-// Health check con verificación real de BD
 app.get('/api/health', async (_req, res) => {
   try {
     await pool.query('SELECT 1');
