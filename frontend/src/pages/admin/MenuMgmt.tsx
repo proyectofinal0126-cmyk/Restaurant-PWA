@@ -11,7 +11,7 @@ import { formatCOP } from '../../utils/constants';
 //   3. Formularios inline para crear/editar
 //   4. Toggle switch para is_available e is_out_of_stock
 // ============================================================
-
+import { UtensilsCrossed } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminStore } from '../../store/adminStore';
@@ -177,7 +177,7 @@ export default function MenuMgmt() {
                     <label>Ícono (emoji)</label>
                     <input className="admin-input" value={catForm.icon}
                       onChange={(e) => setCatForm({ ...catForm, icon: e.target.value })}
-                      placeholder="🍕" maxLength={10}/>
+                      placeholder="" maxLength={10}/>
                   </div>
                   <div className="admin-field">
                     <label>Posición</label>
@@ -216,13 +216,13 @@ export default function MenuMgmt() {
                 {categories.map((cat) => (
                   <div key={cat.id} className={`admin-list-row ${!cat.is_active ? 'row-inactive' : ''}`}>
                     <div className="alr-main">
-                      <span className="alr-icon">{cat.icon || '📂'}</span>
+                      <span className="alr-icon">{cat.icon || ''}</span>
                       <div>
                         <p className="alr-name">{cat.name}</p>
                         <p className="alr-sub">{cat.items_count} ítems · pos. {cat.position}</p>
                       </div>
                     </div>
-                    <div className="alr-meta">{cat.is_active ? '✅ Activa' : '⏸ Inactiva'}</div>
+                    <div className="alr-meta">{cat.is_active ? ' Activa' : '⏸ Inactiva'}</div>
                     <div className="alr-actions">
                       <button className="admin-btn-sm" onClick={() => {
                         setCatForm({ name: cat.name, description: cat.description ?? '', icon: cat.icon ?? '', position: cat.position, is_active: cat.is_active });
@@ -336,7 +336,7 @@ export default function MenuMgmt() {
                       <div className="alr-item-img">
                         {item.image_url
                           ? <img src={item.image_url} alt={item.name} className="alr-img"/>
-                          : <span>🍽️</span>
+                          : <span><UtensilsCrossed size={16}/></span>
                         }
                       </div>
                       <div>

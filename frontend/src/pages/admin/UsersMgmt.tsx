@@ -5,7 +5,7 @@
 //   CRUD de usuarios, asignación de roles, activar/desactivar,
 //   resetear contraseñas sin ver la contraseña actual.
 // ============================================================
-
+import { KeyRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminStore } from '../../store/adminStore';
@@ -247,7 +247,7 @@ export default function UsersMgmt() {
                     setEditId(user.id);
                   }}>Editar</button>
                   <button className="admin-btn-sm" onClick={() => { setResetId(user.id); setNewPwd(''); }}>
-                    🔑 Contraseña
+                    <KeyRound size={14}/> Contraseña
                   </button>
                 </div>
               </div>

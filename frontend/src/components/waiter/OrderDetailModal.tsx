@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { getOrderDetail }       from '../../services/waiterService';
 import { formatCOP }            from '../../utils/constants';
 import type { Order }           from '../../types/order';
-
+import { FileText } from 'lucide-react';
 interface Props {
   orderId:     string;
   orderNumber: string;
@@ -108,7 +108,7 @@ export default function OrderDetailModal({ orderId, orderNumber, tableNumber, on
                           <div className="odm-item-info">
                             <span className="odm-item-name">{item.name}</span>
                             {item.special_instructions && (
-                              <span className="odm-item-note">📝 {item.special_instructions}</span>
+                              <FileText size={13}/>
                             )}
                           </div>
                         </div>

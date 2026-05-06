@@ -12,7 +12,7 @@ import { getOrderById }    from '../services/orderService';
 import { useWebSocket }    from '../hooks/useWebSocket';
 import type { Order, OrderStatus, WsOrderReadyEvent } from '../types/order';
 import '../styles/ordertracker.css'; // ← lowercase
-
+import { PartyPopper } from 'lucide-react';
 const STEPS: { status: OrderStatus; label: string; sub: string; icon: React.ReactNode }[] = [
   {
     status: 'pending_payment', label: 'Recibido', sub: 'Tu pedido fue registrado correctamente',
@@ -46,10 +46,10 @@ function getStatusDisplay(status: OrderStatus): { title: string; color: string }
     payment_confirmed:  { title:'Pago confirmado',      color:'#3b82f6' },
     pending_validation: { title:'Validando pedido...',  color:'#eab308' },
     sent_to_kitchen:    { title:'Enviado a cocina',     color:'#f97316' },
-    in_preparation:     { title:'En preparación 🔥',   color:'#f97316' },
-    ready_for_pickup:   { title:'¡Pedido listo! 🎉',   color:'#22c55e' },
+    in_preparation:     { title:'En preparación ',   color:'#f97316' },
+    ready_for_pickup:   { title:'¡Pedido listo! ',   color:'#22c55e' },
     delivered:          { title:'En camino',            color:'#22c55e' },
-    completed:          { title:'¡Buen provecho! 🍽️', color:'#22c55e' },
+    completed:          { title:'¡Buen provecho! ', color:'#22c55e' },
     cancelled:          { title:'Pedido cancelado',     color:'#ef4444' },
   };
   return map[status] ?? { title:'Procesando...', color:'#6b6775' };
@@ -58,8 +58,8 @@ function getStatusDisplay(status: OrderStatus): { title: string; color: string }
 export default function OrderTracker() {
   const { id }   = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { activeOrder, setActiveOrder } = useOrderStore();
-
+  const activeOrder    = useOrderStore((s) => s.activeOrder);
+const setActiveOrder = useOrderStore((s) => s.setActiveOrder);
   const [order,      setOrder]      = useState<Order | null>(activeOrder);
   const [loading,    setLoading]    = useState(!activeOrder);
   const [error,      setError]      = useState<string | null>(null);
@@ -77,7 +77,7 @@ export default function OrderTracker() {
 
   useEffect(() => {
     if (activeOrder?.id === id) {
-      setOrder((prev) => prev ? { ...prev, status: activeOrder.status } : activeOrder);
+      if (activeOrder) setOrder((prev) => prev ? { ...prev, status: activeOrder.status } : activeOrder);
     }
   }, [activeOrder?.status]); // eslint-disable-line
 
@@ -131,7 +131,7 @@ export default function OrderTracker() {
 
       {readyAlert && (
         <div className="tracker-ready-alert">
-          <span className="ready-icon">🎉</span>
+          <span className="ready-icon"><PartyPopper size={18}/></span>
           <div>
             <p className="ready-title">¡Tu pedido está listo!</p>
             <p className="ready-sub">Pasa a retirarlo al mostrador</p>

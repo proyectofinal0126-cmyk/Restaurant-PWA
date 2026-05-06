@@ -4,7 +4,7 @@
 // Tarjeta de orden con número, tiempo, estado, items y acciones.
 // Las acciones disponibles cambian según el estado de la orden.
 // ============================================================
-
+import { Flame, Banknote, CreditCard, ArrowLeftRight } from 'lucide-react';
 import { useState } from 'react';
 import type { OrderWithMeta } from '../../types/caja';
 import type { OrderStatus } from '../../types/order';
@@ -57,7 +57,7 @@ export default function OrderCard({ order, onValidate, onClose, disabled }: Prop
         </div>
         <div className="oc-right">
           <span className={`oc-time ${order.isUrgent ? 'time-red' : ''}`}>
-            {order.isUrgent && '🔥 '}
+            <Flame size={13}/>
             {timeLabel}
           </span>
           <button className="oc-expand-btn" onClick={() => setExpanded((v) => !v)}>
@@ -72,11 +72,11 @@ export default function OrderCard({ order, onValidate, onClose, disabled }: Prop
       {/* Meta */}
       <div className="oc-meta">
         <span className="oc-source">
-          {order.source === 'autoservicio' ? '📱 Autoservicio' : '👤 Mesero'}
+          {order.source === 'autoservicio' ? ' Autoservicio' : ' Mesero'}
         </span>
         {order.payment_method && (
           <span className="oc-payment">
-            {order.payment_method === 'efectivo' ? '💵' : order.payment_method === 'tarjeta' ? '💳' : '📲'}
+            <Banknote size={13}/>, <CreditCard size={13}/>, <ArrowLeftRight size={13}/>
             {' '}{order.payment_method}
           </span>
         )}

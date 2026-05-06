@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/loginpage.css';
+import { Lock, Eye, EyeOff } from 'lucide-react';
 
 // Credenciales demo por rol para facilitar pruebas en desarrollo
 const DEMO_CREDS: Record<string, { email: string; password: string; label: string }> = {
@@ -164,7 +165,7 @@ export default function LoginPage() {
                   onClick={() => setShowPass((v) => !v)}
                   tabIndex={-1}
                 >
-                  {showPass ? '🙈' : '👁️'}
+                  {showPass ? <EyeOff size={16}/> : <Eye size={16}/>}
                 </button>
               </div>
             </div>

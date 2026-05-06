@@ -1,23 +1,19 @@
+import { formatCOP } from '../../utils/constants';
 // ============================================================
 // frontend/src/pages/admin/Settings.tsx  →  /admin/settings
 //
-// FIX ALINEACIÓN: La sección "Configuración financiera" tenía
-//   Moneda en una columna sola y IVA/Propina en otra fila porque
-//   el grid auto-fill los separaba al estar en divs distintos.
-//   Ahora los tres campos están dentro del mismo admin-form-grid.
+// Propósito: Configuración global del restaurante.
+//   Nombre, dirección, impuestos, propina sugerida, moneda.
+//   Los valores se guardan en la BD y se usan en cálculos.
 // ============================================================
 
 import { useEffect, useState } from 'react';
-import AdminLayout    from '../../components/admin/AdminLayout';
+import AdminLayout from '../../components/admin/AdminLayout';
 import { getSettings, saveSettings } from '../../services/adminService';
 import type { RestaurantSettings } from '../../types/admin';
-import '../../styles/admin.css';
 
 const CURRENCIES = ['USD', 'COP', 'MXN', 'EUR', 'PEN', 'ARS', 'CLP'];
-const TIMEZONES  = [
-  'America/Bogota','America/Mexico_City','America/Lima',
-  'America/Santiago','America/Buenos_Aires','America/New_York','America/Sao_Paulo',
-];
+const TIMEZONES  = ['America/Bogota','America/Mexico_City','America/Lima','America/Santiago','America/Buenos_Aires','America/New_York','America/Sao_Paulo'];
 
 const DEFAULT: RestaurantSettings = {
   name:           'RestaurantPWA',
@@ -25,7 +21,7 @@ const DEFAULT: RestaurantSettings = {
   phone:          '',
   tax_rate:       8,
   tip_suggestion: 10,
-  currency:       'USD',
+  currency:       'COP',
   timezone:       'America/Bogota',
 };
 
@@ -48,8 +44,8 @@ export default function Settings() {
     setSaving(true);
     setError(null);
     try {
-      const result = await saveSettings(settings);
-      setSettings(result);
+      const saved = await saveSettings(settings);
+      setSettings(saved);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (e: unknown) {
@@ -59,24 +55,26 @@ export default function Settings() {
     }
   }
 
-  const numField = (
+  const field = (
     label: string,
     key: keyof RestaurantSettings,
-    hint: string,
-    extra: Record<string, unknown> = {}
+    type: string = 'text',
+    hint?: string,
+    extra?: Record<string, unknown>
   ) => (
     <div className="admin-field">
       <label>{label}</label>
       <input
         className="admin-input"
-        type="number"
+        type={type}
         value={String(settings[key])}
-        onChange={(e) =>
-          setSettings({ ...settings, [key]: parseFloat(e.target.value) || 0 })
-        }
+        onChange={(e) => setSettings({
+          ...settings,
+          [key]: type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value,
+        })}
         {...extra}
       />
-      <span className="field-hint">{hint}</span>
+      {hint && <span className="field-hint">{hint}</span>}
     </div>
   );
 
@@ -99,18 +97,9 @@ export default function Settings() {
             <div className="admin-form-card">
               <h3 className="admin-form-title">Información del restaurante</h3>
               <div className="admin-form-grid">
-                <div className="admin-field">
-                  <label>Nombre del restaurante *</label>
-                  <input className="admin-input" value={settings.name}
-                    onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                    placeholder="RestaurantPWA"/>
-                </div>
-                <div className="admin-field">
-                  <label>Teléfono de contacto</label>
-                  <input className="admin-input" type="tel" value={settings.phone}
-                    onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                    placeholder="+57 300 000 0000"/>
-                </div>
+                {field('Nombre del restaurante *', 'name', 'text', undefined, { placeholder: 'RestaurantPWA' })}
+                {field('Dirección', 'address', 'text', undefined, { placeholder: 'Calle 123 #45-67' })}
+                {field('Teléfono de contacto', 'phone', 'tel', undefined, { placeholder: '+57 300 000 0000' })}
                 <div className="admin-field">
                   <label>Zona horaria</label>
                   <select className="admin-select" value={settings.timezone}
@@ -120,71 +109,45 @@ export default function Settings() {
                     ))}
                   </select>
                 </div>
-                <div className="admin-field admin-field--full">
-                  <label>Dirección</label>
-                  <input className="admin-input" value={settings.address}
-                    onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                    placeholder="Calle 123 #45-67"/>
-                </div>
               </div>
             </div>
 
-            {/* ── Configuración financiera ── */}
-            {/* FIX: Moneda, IVA y Propina en el MISMO grid para alinear correctamente */}
+            {/* Finanzas */}
             <div className="admin-form-card">
-              <h3 className="admin-form-title">Configuración financiera</h3>
-              <div className="admin-form-grid">
+  <h3 className="admin-form-title">Configuración financiera</h3>
+  <div className="admin-form-grid">
+    {field('IVA / Impuesto (%)', 'tax_rate', 'number',
+      'Porcentaje aplicado a cada orden. Ej: 8 = 8%',
+      { min: 0, max: 50, step: 0.1 })}
+    {field('Propina sugerida (%)', 'tip_suggestion', 'number',
+      'Porcentaje sugerido al cliente. Ej: 10 = 10%',
+      { min: 0, max: 30, step: 0.5 })}
+    <div className="admin-field">
+      <label>Moneda</label>
+      <select className="admin-select" value={settings.currency}
+        onChange={(e) => setSettings({ ...settings, currency: e.target.value })}>
+        {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
+      </select>
+    </div>
+  </div>
 
-                {/* Moneda — ahora en la misma fila que IVA y Propina */}
-                <div className="admin-field">
-                  <label>Moneda</label>
-                  <select className="admin-select" value={settings.currency}
-                    onChange={(e) => setSettings({ ...settings, currency: e.target.value })}>
-                    {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-
-                {numField(
-                  'IVA / Impuesto (%)', 'tax_rate',
-                  'Porcentaje aplicado a cada orden. Ej: 8 = 8%',
-                  { min: 0, max: 50, step: 0.1 }
-                )}
-
-                {numField(
-                  'Propina sugerida (%)', 'tip_suggestion',
-                  'Porcentaje sugerido al cliente. Ej: 10 = 10%',
-                  { min: 0, max: 30, step: 0.5 }
-                )}
-              </div>
-
-              {/* Vista previa */}
-              <div className="settings-preview">
-                <p className="settings-preview-title">Vista previa con $100.000 de subtotal:</p>
-                <div className="settings-preview-rows">
-                  <div className="spr-row"><span>Subtotal</span><span>$100.000</span></div>
-                  <div className="spr-row">
-                    <span>IVA ({settings.tax_rate}%)</span>
-                    <span>${(100000 * settings.tax_rate / 100).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</span>
-                  </div>
-                  <div className="spr-row spr-total">
-                    <span>Total</span>
-                    <span>${(100000 + 100000 * settings.tax_rate / 100).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</span>
-                  </div>
-                  <div className="spr-row spr-tip">
-                    <span>Propina sugerida ({settings.tip_suggestion}%)</span>
-                    <span>+${(100000 * settings.tip_suggestion / 100).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</span>
-                  </div>
-                </div>
-              </div>
+         
+                  
+             
             </div>
 
+            {/* Acciones */}
             {error && <div className="admin-error-banner" role="alert">{error}</div>}
-            {saved  && <div className="admin-success-banner">✅ Configuración guardada correctamente</div>}
+            {saved  && <div className="admin-success-banner"> Configuración guardada correctamente</div>}
 
             <div className="admin-form-actions" style={{ justifyContent: 'flex-end' }}>
-              <button type="button" className="admin-btn-primary"
-                onClick={handleSave} disabled={saving || !settings.name}
-                style={{ minWidth: 180 }}>
+              <button
+                type="button"
+                className="admin-btn-primary"
+                onClick={handleSave}
+                disabled={saving || !settings.name}
+                style={{ minWidth: 160 }}
+              >
                 {saving ? 'Guardando...' : 'Guardar configuración'}
               </button>
             </div>

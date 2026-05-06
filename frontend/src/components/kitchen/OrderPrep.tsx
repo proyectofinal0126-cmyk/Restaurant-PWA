@@ -31,9 +31,9 @@ interface Props {
 }
 
 const SOURCE_LABEL: Record<string, string> = {
-  autoservicio: '📱 Autoservicio',
-  waiter:       '👤 Mesero',
-  kiosk:        '🖥️ Kiosk',
+  autoservicio: ' Autoservicio',
+  waiter:       ' Mesero',
+  kiosk:        ' Kiosk',
 };
 
 const OrderPrep = memo(function OrderPrep({
@@ -186,7 +186,7 @@ const OrderPrep = memo(function OrderPrep({
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.8"/>
               <path d="M6 10l3 3 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            {order.allItemsCompleted ? 'Marcar listo ✓' : `Faltan ${(order.items?.length ?? 0) - order.completedItemIds.size} items`}
+            {order.allItemsCompleted ? 'listo ' : `Faltan ${(order.items?.length ?? 0) - order.completedItemIds.size} items`}
           </button>
         )}
 

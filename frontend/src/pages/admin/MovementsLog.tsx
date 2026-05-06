@@ -9,6 +9,7 @@ import { getMovements, getIngredients } from '../../services/inventoryService';
 import type { MovementFilter, MovementType } from '../../types/inventory';
 import '../../styles/admin.css';
 import '../../styles/inventory.css';
+import { Download } from 'lucide-react';
 
 const TYPE_LABEL: Record<string, string> = {
   entrada: 'Entrada', salida: 'Salida', ajuste: 'Ajuste', consumo_turno: 'Consumo turno',
@@ -65,7 +66,7 @@ export default function MovementsLog() {
             <p className="admin-page-sub">Trazabilidad completa de la bodega</p>
           </div>
           <button className="admin-btn-ghost" onClick={handleExportCSV} disabled={movements.length === 0}>
-            📥 Exportar CSV
+            <Download size={14}/> Exportar CSV
           </button>
         </div>
 

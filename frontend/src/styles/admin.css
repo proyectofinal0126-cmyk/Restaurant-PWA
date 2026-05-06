@@ -278,15 +278,23 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .admin-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px; align-items: end;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
 }
-.admin-field { display: flex; flex-direction: column; gap: 5px; }
-.admin-field label { font-size: 12px; color: var(--a-muted); font-weight: 500; }
-.admin-field--full { grid-column: 1 / -1; }
-.admin-field--toggle { flex-direction: row; align-items: center; gap: 10px; }
-.admin-field--toggle label { min-width: 80px; }
-.field-hint { font-size: 11px; color: var(--a-dim); }
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.admin-input,
+.admin-select {
+  width: 100%;
+  min-height: 44px;
+}
 
 .admin-form-actions {
   display: flex; justify-content: flex-end; gap: 10px;
@@ -310,8 +318,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   text-transform: uppercase; letter-spacing: 0.4px;
   border-bottom: 1px solid var(--a-border);
 }
+
 .admin-list-row {
-  display: flex; align-items: center; gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 16px;
   border-bottom: 1px solid rgba(28,20,16,0.03);
   transition: background 0.15s;
@@ -411,11 +422,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   background: rgba(28,20,16,0.03); border: 1px solid var(--a-border);
   border-radius: 10px; padding: 14px;
 }
-.settings-preview-title { font-size: 12px; color: var(--a-muted); margin-bottom: 10px; }
-.settings-preview-rows { display: flex; flex-direction: column; gap: 6px; }
-.spr-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--a-muted); }
-.spr-total { font-weight: 700; color: var(--a-text); font-size: 14px; padding-top: 6px; border-top: 1px solid var(--a-border); }
+.spr-row { display: flex; justify-content: space-between; font-size: 13px; color: #1E293B; }
+.spr-total { font-weight: 700; color: #1D1D1F; font-size: 14px; padding-top: 6px; border-top: 1px solid var(--a-border); }
 .spr-tip { color: var(--a-yellow); font-size: 12px; }
+.settings-preview-title { font-size: 12px; color: #475569; margin-bottom: 10px; }
 
 /* ── Modal confirm ── */
 .admin-confirm-modal {

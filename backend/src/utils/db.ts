@@ -10,6 +10,7 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'restaurant_pwa',
   user: process.env.DB_USER || 'postgres',
   password: String(process.env.DB_PASSWORD || 'Tdea2024'),
+  client_encoding: 'UTF8',
 });
 
 pool.on('error', (err) => {
@@ -22,7 +23,7 @@ pool.connect()
     client.release();
   })
   .catch((err) => {
-    console.error('❌ Error conectando a PostgreSQL:', err.message);
+    console.error(' Error conectando a PostgreSQL:', err.message);
   });
 
 export const query = (text: string, params?: any[]) => {

@@ -10,7 +10,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppStore } from './store/appStore';
-
+import { Lock } from 'lucide-react';
 import Home             from './pages/Home';
 import RoleSelectPage   from './pages/RoleSelectPage';
 import LoginPage        from './pages/LoginPage';
@@ -54,7 +54,7 @@ const Unauthorized = () => (
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     justifyContent: 'center', gap: '14px', fontFamily: 'sans-serif',
   }}>
-    <span style={{ fontSize: 52 }}>🔒</span>
+    <Lock size={52} />
     <h2 style={{ margin: 0 }}>Acceso denegado</h2>
     <a href="/" style={{ color: '#f97316', fontSize: 13, textDecoration: 'none' }}>← Inicio</a>
   </div>

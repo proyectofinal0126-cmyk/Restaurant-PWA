@@ -13,7 +13,7 @@
 //   4. Confirma → PATCH /orders/:id/request-bill
 //   5. Mesa pasa a waiting_bill → CAJA cobra y libera la mesa
 // ============================================================
-
+import { Banknote, CreditCard, ArrowLeftRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { requestBill, getOrderDetail } from '../../services/waiterService';
 import { ApiError }                    from '../../services/api';
@@ -22,10 +22,10 @@ import type { Order }                  from '../../types/order';
 type PaymentMethod = 'efectivo' | 'tarjeta_debito' | 'tarjeta_credito' | 'transferencia';
 
 const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: string }[] = [
-  { value: 'efectivo',        label: 'Efectivo',      icon: '💵' },
-  { value: 'tarjeta_debito',  label: 'Débito',        icon: '💳' },
-  { value: 'tarjeta_credito', label: 'Crédito',       icon: '💎' },
-  { value: 'transferencia',   label: 'Transf.',       icon: '📲' },
+  { value: 'efectivo',        label: 'Efectivo',      icon: 'cash' },
+  { value: 'tarjeta_debito',  label: 'Débito',        icon: 'card' },
+  { value: 'tarjeta_credito', label: 'Crédito',       icon: '' },
+  { value: 'transferencia',   label: 'Transf.',       icon: 'transfer' },
 ];
 
 interface Props {
@@ -150,7 +150,9 @@ export default function BillRequestModal({
                     className={`brm-pay-btn ${method === value ? 'brm-pay-btn--active' : ''}`}
                     onClick={() => setMethod(value)}
                   >
-                    <span className="brm-pay-icon">{icon}</span>
+                    <span className="brm-pay-icon">
+  {icon === 'cash' ? <Banknote size={16}/> : icon === 'card' ? <CreditCard size={16}/> : <ArrowLeftRight size={16}/>}
+</span>
                     <span>{label}</span>
                   </button>
                 ))}

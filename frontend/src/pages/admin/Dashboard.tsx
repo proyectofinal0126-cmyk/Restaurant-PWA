@@ -192,8 +192,7 @@ export default function Dashboard() {
                     <div key={s.source} className="source-row">
                       <div className="source-dot" style={{ background: COLORS[i % COLORS.length] }} />
                       <span className="source-name">
-                        {s.source === 'autoservicio' ? '📱 Autoservicio'
-                          : s.source === 'waiter' ? '👤 Mesero' : s.source}
+                        {s.source === 'autoservicio' ? 'Autoservicio' : s.source === 'waiter' ? 'Mesero' : s.source}
                       </span>
                       <span className="source-orders">{s.orders} órdenes</span>
                       <span className="source-revenue">{fmtMoney(s.revenue)}</span>

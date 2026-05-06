@@ -31,7 +31,7 @@ import { payOrder }            from '../../services/cashierService';
 import { ApiError }            from '../../services/api';
 import type { CashierPaymentMethod } from '../../types/cashier';
 import type { PayOrderResponse }     from '../../types/cashier';
-
+import { Banknote, CreditCard, ArrowLeftRight } from 'lucide-react';
 interface Props {
   onSuccess: (result: PayOrderResponse) => void;
   onBack:    () => void;
@@ -39,17 +39,17 @@ interface Props {
 }
 
 const METHOD_OPTIONS: { value: CashierPaymentMethod; label: string; icon: string }[] = [
-  { value: 'efectivo',        label: 'Efectivo',        icon: '💵' },
-  { value: 'tarjeta_debito',  label: 'Tarjeta débito',  icon: '💳' },
-  { value: 'tarjeta_credito', label: 'Tarjeta crédito', icon: '💳' },
-  { value: 'transferencia',   label: 'Transferencia',   icon: '📲' },
+  { value: 'efectivo',        label: 'Efectivo',        icon: 'cash' },
+  { value: 'tarjeta_debito',  label: 'Tarjeta débito',  icon: 'card' },
+  { value: 'tarjeta_credito', label: 'Tarjeta crédito', icon: 'card' },
+  { value: 'transferencia',   label: 'Transferencia',   icon: 'transfer' },
 ];
 
 const METHOD_LABELS: Record<string, string> = {
-  efectivo:        '💵 Efectivo',
-  tarjeta_debito:  '💳 Tarjeta débito',
-  tarjeta_credito: '💳 Tarjeta crédito',
-  transferencia:   '📲 Transferencia',
+  efectivo:        'Efectivo',
+  tarjeta_debito:  'Tarjeta débito',
+  tarjeta_credito: 'Tarjeta crédito',
+  transferencia:   'Transferencia',
 };
 
 export default function PaymentMethod({ onSuccess, onBack, onClose }: Props) {
@@ -193,7 +193,9 @@ export default function PaymentMethod({ onSuccess, onBack, onClose }: Props) {
                   onClick={() => { setPaymentMethod(value); setSubmitError(null); }}
                   disabled={isProcessing}
                 >
-                  <span className="pm-icon">{icon}</span>
+                  <span className="pm-icon">
+  {icon === 'cash' ? <Banknote size={18}/> : icon === 'card' ? <CreditCard size={18}/> : <ArrowLeftRight size={18}/>}
+</span>
                   <span className="pm-label">{label}</span>
                 </button>
               ))}

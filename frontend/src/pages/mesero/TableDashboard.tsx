@@ -284,7 +284,7 @@ export default function TableDashboard() {
           </div>
           {stats.ready > 0 && (
             <div className="stat-chip chip-emerald">
-              <span>{stats.ready}</span> listas 🎉
+              <span>{stats.ready}</span> listas
             </div>
           )}
           {stats.waitingBill > 0 && (

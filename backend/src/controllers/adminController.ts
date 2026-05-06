@@ -182,9 +182,9 @@ export async function getReports(req: Request, res: Response) {
         SELECT EXTRACT(HOUR FROM created_at AT TIME ZONE 'America/Bogota') AS hour,
                COUNT(*) AS orders,
                COALESCE(SUM(total), 0) AS revenue
-        FROM orders
-        WHERE DATE(created_at AT TIME ZONE 'America/Bogota') BETWEEN $1 AND $2
-          AND status = 'completed' ${sourceFilter}
+        FROM orders o
+        WHERE DATE(o.created_at AT TIME ZONE 'America/Bogota') BETWEEN $1 AND $2
+          AND o.status = 'completed' ${sourceFilter}
         GROUP BY hour ORDER BY hour
       `, [from, to]),
 

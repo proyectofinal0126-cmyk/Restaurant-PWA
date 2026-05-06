@@ -7,7 +7,7 @@
 //   - Tabla de ingredientes con acciones rápidas
 //   - Modales: crear/editar ingrediente, entrada, ajuste, historial
 // ============================================================
-
+import { Factory, ClipboardList, History, Package, Settings2, AlertTriangle } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate }         from 'react-router-dom';
 import AdminLayout             from '../../components/admin/AdminLayout';
@@ -29,7 +29,7 @@ const EMPTY_ING: IngredientForm = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  OK: '🟢 OK', BAJO: '🟡 Bajo', CRITICO: '🔴 Crítico', AGOTADO: '⚫ Agotado',
+  OK: ' OK', BAJO: ' Bajo', CRITICO: ' Crítico', AGOTADO: ' Agotado',
 };
 
 function StockBadge({ status }: { status: string }) {
@@ -135,13 +135,13 @@ export default function InventoryDashboard() {
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="admin-btn-ghost" onClick={() => navigate('/admin/proveedores')}>
-              🏭 Proveedores
+              <Factory size={14}/> Proveedores
             </button>
             <button className="admin-btn-ghost" onClick={() => navigate('/admin/recetas')}>
-              📋 Recetas
+              <ClipboardList size={14}/> Recetas
             </button>
             <button className="admin-btn-ghost" onClick={() => navigate('/admin/inventario/movimientos')}>
-              📊 Historial
+              <History size={14}/> Historial
             </button>
             <button className="admin-btn-teal" onClick={() => { setIngForm(EMPTY_ING); setEditIngId(null); }}>
               + Ingrediente
@@ -152,7 +152,7 @@ export default function InventoryDashboard() {
         {/* Banner alertas */}
         {lowStockCount > 0 && (
           <div className="low-stock-banner">
-            <span className="lsb-icon">⚠️</span>
+            <AlertTriangle size={14}/>
             <span className="lsb-text">
               {totalBajo} ingrediente{totalBajo > 1 ? 's' : ''} con stock bajo o crítico
             </span>
@@ -188,10 +188,10 @@ export default function InventoryDashboard() {
           </div>
           <select className="admin-select" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="">Todos los estados</option>
-            <option value="OK">🟢 OK</option>
-            <option value="BAJO">🟡 Bajo</option>
-            <option value="CRITICO">🔴 Crítico</option>
-            <option value="AGOTADO">⚫ Agotado</option>
+            <option value="OK"> OK</option>
+            <option value="BAJO"> Bajo</option>
+            <option value="CRITICO"> Crítico</option>
+            <option value="AGOTADO"> Agotado</option>
           </select>
           <button className="admin-btn-ghost" onClick={load}>↺ Actualizar</button>
         </div>
@@ -320,7 +320,7 @@ export default function InventoryDashboard() {
         {entryForm && (
           <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setEntryForm(null)}>
             <div className="admin-confirm-modal" style={{ maxWidth: 400 }}>
-              <h3>📦 Registrar entrada</h3>
+              <Package size={15}/> Registrar entrada
               <p style={{ fontSize: 13, color: 'var(--a-muted)' }}>
                 {ingredients.find((i) => i.id === entryForm.ingredient_id)?.name}
                 {' — Stock actual: '}
@@ -356,7 +356,7 @@ export default function InventoryDashboard() {
         {adjForm && (
           <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setAdjForm(null)}>
             <div className="admin-confirm-modal" style={{ maxWidth: 400 }}>
-              <h3>🔧 Ajuste de stock</h3>
+              <Settings2 size={15}/> Ajuste de stock
               <p style={{ fontSize: 12, color: 'var(--a-muted)' }}>
                 Usa valores negativos para mermas. La justificación es obligatoria.
               </p>

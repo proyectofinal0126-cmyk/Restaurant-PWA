@@ -12,6 +12,7 @@ import { useAdminStore }  from '../../store/adminStore';
 import { getReport }      from '../../services/adminService';
 import type { ReportFilter, ReportData } from '../../types/admin';
 import '../../styles/admin.css';
+import { Printer, BarChart2 } from 'lucide-react';
 
 const today = new Date().toISOString().split('T')[0];
 const week  = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
@@ -162,8 +163,8 @@ export default function Reports() {
           </div>
           {report && (
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="admin-btn-ghost" onClick={handlePrint}>🖨️ PDF</button>
-              <button className="admin-btn-ghost" onClick={handleExportExcel}>📊 Excel</button>
+              <button className="admin-btn-ghost" onClick={handlePrint}><Printer size={14}/> PDF</button>
+              <button className="admin-btn-ghost" onClick={handleExportExcel}><BarChart2 size={14}/> Excel</button>
             </div>
           )}
         </div>
@@ -244,7 +245,7 @@ export default function Reports() {
                   {report.topItems.slice(0, 10).map((item, i) => (
                     <div key={item.name} className="admin-list-row">
                       <span className="rank-num">#{i + 1}</span>
-                      <div style={{ flex: 1 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <p className="alr-name">{item.name}</p>
                         <p className="alr-sub">{item.category}</p>
                       </div>

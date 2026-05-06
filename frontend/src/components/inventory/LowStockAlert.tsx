@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInventoryStore } from '../../store/inventoryStore';
 import { getLowStock }       from '../../services/inventoryService';
-
+import { AlertTriangle } from 'lucide-react';
 export default function LowStockAlert() {
   const { lowStockItems, lowStockCount, setLowStock } = useInventoryStore();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function LowStockAlert() {
 
   return (
     <div className="low-stock-banner" role="alert">
-      <span className="lsb-icon">⚠️</span>
+      <AlertTriangle size={14}/>
       <div className="lsb-text">
         <strong>
           {critical > 0
