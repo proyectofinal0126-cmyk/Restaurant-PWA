@@ -1,10 +1,11 @@
 // ============================================================
-// backend/src/routes/orders.ts
+// backend/src/routes/orders.ts  —  Fase 10 (corregido)
 //
-// NUEVO: PATCH /api/orders/:id/request-bill
-//   El mesero lo llama cuando el cliente pide la cuenta.
-//   Registra método de pago + propina y cambia mesa a waiting_bill.
-//   A partir de ahí, caja puede cobrar.
+// CAMBIO vs original:
+//   + POST /items/:id/prepare  → prepareOrderItem (F10: descuenta
+//     ingredientes del mini-inventario al marcar ítem como preparado)
+//
+// TODO lo demás se mantiene IGUAL al original del proyecto.
 // ============================================================
 
 import { Router } from 'express';
@@ -16,14 +17,23 @@ import {
   getOrderHistory,
   requestBill,
 } from '../controllers/orderController';
-import { closeOrder }  from '../controllers/cajaController';
-import { getOrderMetrics } from '../controllers/metricsController';
-import { authenticate }   from '../middleware/auth';
-import { requireRole }    from '../middleware/roleAuth';
+import { closeOrder }        from '../controllers/cajaController';
+import { getOrderMetrics }   from '../controllers/metricsController';
+import { prepareOrderItem }  from '../controllers/shiftController';  // ← ÚNICO nuevo de F10
+import { authenticate }      from '../middleware/auth';
+import { requireRole }       from '../middleware/roleAuth';
 
 const router = Router();
 
 // ── Rutas específicas (SIEMPRE antes que /:id) ───────────────
+
+// F10: preparar ítem y descontar mini-inventario (ANTES de /active para evitar conflicto)
+router.post(
+  '/items/:id/prepare',
+  authenticate,
+  requireRole(['cocina', 'admin']),
+  prepareOrderItem
+);
 
 // Órdenes activas — caja, cocina, mesero, admin
 router.get(
@@ -62,7 +72,7 @@ router.patch(
   updateOrderStatus
 );
 
-// NUEVO: El mesero solicita la cuenta (cliente pidió pagar).
+// El mesero solicita la cuenta (cliente pidió pagar).
 // Registra método de pago + propina → mesa pasa a waiting_bill → caja cobra.
 router.patch(
   '/:id/request-bill',
