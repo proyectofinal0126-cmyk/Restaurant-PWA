@@ -98,13 +98,16 @@ function serviceDuration(createdAt: string): string {
 }
 
 // ── Tarjeta del panel monitor ───────────────────────────────
-function MonitorCard({ order }: { order: MonitorOrder }) {
-  const [expanded, setExpanded] = useState(false);
+function MonitorCard({ order, expanded, onToggle }: { 
+  order: MonitorOrder; 
+  expanded: boolean; 
+  onToggle: () => void;
+}) {
   const st = ORDER_STATUS_LABELS[order.status] ?? { label: order.status, cls: '' };
 
   return (
     <div className={`mc-card ${st.cls}`}>
-      <div className="mc-header" onClick={() => setExpanded((v) => !v)}>
+      <div className="mc-header" onClick={onToggle}>
         <div className="mc-left">
           <span className="mc-order-num">{order.orderNumber}</span>
           {order.tableNumber && (
@@ -213,6 +216,7 @@ export default function CajaMesero() {
   const [activePanel,  setActivePanel]  = useState<ActivePanel>('monitor');
   const [searchQuery,  setSearchQuery]  = useState('');
   const [showHistory,  setShowHistory]  = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   const loadTables = useCallback(() => {
     setLoading(true);
@@ -344,9 +348,16 @@ export default function CajaMesero() {
               </div>
             ) : (
               <div className="cajam-monitor-grid">
-                {activeMonitor.map((order) => (
-                  <MonitorCard key={order.orderId} order={order} />
-                ))}
+{activeMonitor.map((order) => (
+  <MonitorCard
+    key={order.orderId}
+    order={order}
+    expanded={expandedOrder === order.orderId}
+    onToggle={() => setExpandedOrder(
+      expandedOrder === order.orderId ? null : order.orderId
+    )}
+  />
+))}
               </div>
             )}
           </div>

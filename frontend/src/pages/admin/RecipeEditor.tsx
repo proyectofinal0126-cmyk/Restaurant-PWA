@@ -1,7 +1,7 @@
 // ============================================================
 // frontend/src/pages/admin/RecipeEditor.tsx  →  /admin/recetas
 // ============================================================
-
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import AdminLayout             from '../../components/admin/AdminLayout';
 import { useInventoryStore }   from '../../store/inventoryStore';
@@ -16,6 +16,7 @@ import '../../styles/inventory.css';
 interface MenuItem { id: string; name: string; category_name: string; }
 
 export default function RecipeEditor() {
+  const navigate = useNavigate();
   const { ingredients, setIngredients, setError } = useInventoryStore();
   const [menuItems,    setMenuItems]    = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<string>('');
@@ -23,7 +24,7 @@ export default function RecipeEditor() {
   const [loading,      setLoading]      = useState(false);
   const [newIng,       setNewIng]       = useState<RecipeIngredientForm>({ ingredient_id: '', quantity_required: 0 });
   const [saving,       setSaving]       = useState(false);
-
+  
   useEffect(() => {
     apiFetch<MenuItem[]>('/admin/menu/items').then(setMenuItems).catch(() => {});
     if (!ingredients.length) getIngredients().then(setIngredients).catch(() => {});
@@ -64,12 +65,17 @@ export default function RecipeEditor() {
   return (
     <AdminLayout>
       <div className="admin-page">
-        <div className="admin-page-header">
-          <div>
-            <h1 className="admin-page-title">Editor de Recetas</h1>
-            <p className="admin-page-sub">Vincula ingredientes a los platillos del menú</p>
-          </div>
-        </div>
+<div className="admin-page-header">
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <button className="admin-btn-ghost" onClick={() => navigate(-1)}>
+      ← Volver
+    </button>
+    <div>
+      <h1 className="admin-page-title">Editor de Recetas</h1>
+      <p className="admin-page-sub">Vincula ingredientes a los platillos del menú</p>
+    </div>
+  </div>
+</div>
 
         {/* Selector de platillo */}
         <div className="admin-form-card">

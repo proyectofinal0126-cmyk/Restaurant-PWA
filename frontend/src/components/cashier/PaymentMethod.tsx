@@ -66,9 +66,9 @@ export default function PaymentMethod({ onSuccess, onBack, onClose }: Props) {
   // ── ¿Mesero ya definió propina / método? ──────────────────
   // activeBill.tip > 0  →  propina ya incluida en activeBill.total, no sumar otra vez.
   // selectedTable.paymentMethod set  →  método acordado, no editable.
-  const waiterTip            = activeBill?.tip ?? 0;
-  const tipLockedByWaiter    = waiterTip > 0;
-  const methodLockedByWaiter = !!selectedTable?.paymentMethod;
+const waiterTip            = activeBill?.tip ?? 0;
+const methodLockedByWaiter = !!selectedTable?.paymentMethod;
+const tipLockedByWaiter    = methodLockedByWaiter;
 
   // Propina libre (solo cuando el mesero NO la fijó)
   const [tipEditable, setTipEditable] = useState('');

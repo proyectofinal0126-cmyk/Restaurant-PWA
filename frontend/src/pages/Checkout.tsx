@@ -7,7 +7,7 @@ import { formatCOP } from '../utils/constants';
 //   en lugar de redirigir directamente al tracker.
 //   El cliente puede ir al tracker desde esa pantalla.
 // ============================================================
-
+import { Banknote, CreditCard, ArrowLeftRight } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -20,12 +20,11 @@ import '../styles/checkout.css';
 
 type PaymentMethod = 'efectivo' | 'tarjeta' | 'transferencia';
 
-const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: string }[] = [
-  { value: 'efectivo',      label: 'Efectivo',      icon: '💵' },
-  { value: 'tarjeta',       label: 'Tarjeta',        icon: '💳' },
-  { value: 'transferencia', label: 'Transferencia',  icon: '📲' },
+const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: React.ReactNode }[] = [
+  { value: 'efectivo',      label: 'Efectivo',      icon: <Banknote size={20}/> },
+  { value: 'tarjeta',       label: 'Tarjeta',        icon: <CreditCard size={20}/> },
+  { value: 'transferencia', label: 'Transferencia',  icon: <ArrowLeftRight size={20}/> },
 ];
-
 // ── Pantalla de confirmación ──────────────────────────────────
 function OrderConfirmed({ order, onTrack, onNew }: {
   order: Order;
@@ -103,9 +102,9 @@ function OrderConfirmed({ order, onTrack, onNew }: {
               <path d="M1 7h14" stroke="currentColor" strokeWidth="1.3"/>
             </svg>
             Pago: <strong>{
-              order.payment_method === 'efectivo' ? '💵 Efectivo'
-              : order.payment_method === 'tarjeta' ? '💳 Tarjeta'
-              : '📲 Transferencia'
+             order.payment_method === 'efectivo' ? 'Efectivo'
+: order.payment_method === 'tarjeta' ? 'Tarjeta'
+: 'Transferencia'
             }</strong>
           </div>
 

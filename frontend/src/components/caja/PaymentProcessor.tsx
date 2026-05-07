@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import type { OrderWithMeta } from '../../types/caja';
+import { Banknote, CreditCard, ArrowLeftRight } from 'lucide-react';
 
 interface Props {
   order:     OrderWithMeta;
@@ -46,9 +47,11 @@ export default function PaymentProcessor({ order, onConfirm, onCancel, loading }
           <div className="pp-row">
             <span>Método</span>
             <span className="pp-val pp-payment-badge">
-              {order.payment_method === 'efectivo' ? '💵 Efectivo'
-               : order.payment_method === 'tarjeta' ? '💳 Tarjeta'
-               : '📲 Transferencia'}
+              {order.payment_method === 'efectivo' 
+  ? <><Banknote size={14}/> Efectivo</>
+  : order.payment_method === 'tarjeta' 
+  ? <><CreditCard size={14}/> Tarjeta</>
+  : <><ArrowLeftRight size={14}/> Transferencia</>}
             </span>
           </div>
           <div className="pp-divider" />

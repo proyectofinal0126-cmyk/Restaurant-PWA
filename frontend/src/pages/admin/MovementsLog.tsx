@@ -10,6 +10,7 @@ import type { MovementFilter, MovementType } from '../../types/inventory';
 import '../../styles/admin.css';
 import '../../styles/inventory.css';
 import { Download } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const TYPE_LABEL: Record<string, string> = {
   entrada: 'Entrada', salida: 'Salida', ajuste: 'Ajuste', consumo_turno: 'Consumo turno',
@@ -19,6 +20,7 @@ const today = new Date().toLocaleDateString('sv-SE');
 const week  = new Date(Date.now() - 7 * 86400000).toLocaleDateString('sv-SE');
 
 export default function MovementsLog() {
+  const navigate = useNavigate();
   const { movements, movLoading, ingredients, setMovements, setMovLoading, setIngredients, setError } = useInventoryStore();
   const [filter, setFilter] = useState<MovementFilter>({ date_from: week, date_to: today });
 
@@ -59,16 +61,20 @@ export default function MovementsLog() {
 
   return (
     <AdminLayout>
-      <div className="admin-page">
-        <div className="admin-page-header">
-          <div>
-            <h1 className="admin-page-title">Historial de movimientos</h1>
-            <p className="admin-page-sub">Trazabilidad completa de la bodega</p>
-          </div>
-          <button className="admin-btn-ghost" onClick={handleExportCSV} disabled={movements.length === 0}>
-            <Download size={14}/> Exportar CSV
-          </button>
-        </div>
+<div className="admin-page-header">
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <button className="admin-btn-ghost" onClick={() => navigate(-1)}>
+      ← Volver
+    </button>
+    <div>
+      <h1 className="admin-page-title">Historial de movimientos</h1>
+      <p className="admin-page-sub">Trazabilidad completa de la bodega</p>
+    </div>
+  </div>
+  <button className="admin-btn-ghost" onClick={handleExportCSV} disabled={movements.length === 0}>
+    <Download size={14}/> Exportar CSV
+  </button>
+</div>
 
         {/* Filtros */}
         <div className="inv-filters">
@@ -150,7 +156,6 @@ export default function MovementsLog() {
             </table>
           </div>
         )}
-      </div>
     </AdminLayout>
   );
 }

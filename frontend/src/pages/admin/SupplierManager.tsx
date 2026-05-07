@@ -9,10 +9,11 @@ import { getSuppliers, createSupplier, updateSupplier } from '../../services/inv
 import type { SupplierForm } from '../../types/inventory';
 import '../../styles/admin.css';
 import '../../styles/inventory.css';
-
+import { useNavigate } from 'react-router-dom';
 const EMPTY: SupplierForm = { name: '', contact_name: '', phone: '', email: '', address: '', is_active: true };
 
 export default function SupplierManager() {
+  const navigate = useNavigate();
   const { suppliers, supLoading, setSuppliers, setSupLoading, updateSupplierInList, setError } = useInventoryStore();
   const [form,   setForm]   = useState<SupplierForm | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
@@ -42,16 +43,20 @@ export default function SupplierManager() {
 
   return (
     <AdminLayout>
-      <div className="admin-page">
-        <div className="admin-page-header">
-          <div>
-            <h1 className="admin-page-title">Proveedores</h1>
-            <p className="admin-page-sub">{suppliers.length} proveedores registrados</p>
-          </div>
-          <button className="admin-btn-teal" onClick={() => { setForm(EMPTY); setEditId(null); }}>
-            + Proveedor
-          </button>
-        </div>
+ <div className="admin-page-header">
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <button className="admin-btn-ghost" onClick={() => navigate(-1)}>
+      ← Volver
+    </button>
+    <div>
+      <h1 className="admin-page-title">Proveedores</h1>
+      <p className="admin-page-sub">{suppliers.length} proveedores registrados</p>
+    </div>
+  </div>
+  <button className="admin-btn-teal" onClick={() => { setForm(EMPTY); setEditId(null); }}>
+    + Proveedor
+  </button>
+</div>
 
         {form && (
           <div className="admin-form-card">
@@ -127,7 +132,7 @@ export default function SupplierManager() {
             </table>
           </div>
         )}
-      </div>
+      
     </AdminLayout>
   );
 }

@@ -604,6 +604,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 12px;
+  align-items: start;
 }
 
 /* MonitorCard */
@@ -625,10 +626,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .mc-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px; cursor: pointer; gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 .mc-header:hover { background: rgba(255,255,255,.03); }
 
-.mc-left { display: flex; align-items: center; gap: 10px; }
+.mc-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .mc-order-num { font-weight: 700; font-size: .9rem; color: var(--text-primary); }
 .mc-table {
   font-size: .78rem; padding: 2px 8px;
@@ -636,7 +639,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   border-radius: 20px; color: var(--text-secondary);
 }
 
-.mc-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .mc-badge {
   font-size: .75rem; font-weight: 600; padding: 3px 10px;
   border-radius: 20px;

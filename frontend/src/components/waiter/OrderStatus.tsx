@@ -26,6 +26,7 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   in_preparation:     { label: 'Preparando',         cls: 'os-orange' },
   ready_for_pickup:   { label: '¡Listo!',            cls: 'os-green'  },
   delivered:          { label: 'Entregado',          cls: 'os-teal'   },
+  waiting_bill: { label: 'Esperando cobro', cls: 'os-yellow' },
   completed:          { label: 'Completado',         cls: 'os-gray'   },
   cancelled:          { label: 'Cancelado',          cls: 'os-red'    },
 };
