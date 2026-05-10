@@ -108,8 +108,11 @@ export default function OrderDetailModal({ orderId, orderNumber, tableNumber, on
                           <div className="odm-item-info">
                             <span className="odm-item-name">{item.name}</span>
                             {item.special_instructions && (
-                              <FileText size={13}/>
-                            )}
+  <span className="odm-item-note">
+    <FileText size={13}/> {item.special_instructions}
+  </span>
+)}
+                            
                           </div>
                         </div>
                         <span className="odm-item-price">

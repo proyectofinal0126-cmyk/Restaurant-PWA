@@ -22,6 +22,13 @@ const NAV_ITEMS = [
     </svg>,
   },
   {
+  path: '/admin/mesas', label: 'Mesas',
+  icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <rect x="2" y="6" width="14" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
+    <path d="M5 6V4M13 6V4M2 10h14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+  </svg>,
+},
+  {
     path: '/admin/menu', label: 'Menú',
     icon: <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
       <path d="M3 5h12M3 9h12M3 13h7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>

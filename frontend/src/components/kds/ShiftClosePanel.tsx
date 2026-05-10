@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import { useShiftStore } from '../../store/shiftStore';
 import { apiFetch }      from '../../services/api';
-
+import { Lock, TrendingDown, X } from 'lucide-react';
 interface Props {
   onClose:  () => void;
   onClosed: () => void;  // callback cuando el turno se cerró exitosamente
@@ -106,8 +106,8 @@ export default function ShiftClosePanel({ onClose, onClosed }: Props) {
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="shift-modal shift-modal--wide">
         <div className="shift-modal-header">
-          <h3>🔒 Cerrar turno</h3>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+          <h3><Lock size={15}/> Cerrar turno</h3>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar"><X size={15}/></button>
         </div>
 
         <div className="shift-modal-body">
@@ -140,8 +140,8 @@ export default function ShiftClosePanel({ onClose, onClosed }: Props) {
                         onClick={() => setLineMode(line.ingredient_id, mode)}
                       >
                         {mode === 'devolver' ? '↩ Devolver a bodega'
-                          : mode === 'merma' ? '📉 Registrar merma'
-                          : '— Ignorar'}
+  : mode === 'merma' ? <><TrendingDown size={13}/> Registrar merma</>
+  : '— Ignorar'}
                       </button>
                     ))}
                   </div>
@@ -177,9 +177,9 @@ export default function ShiftClosePanel({ onClose, onClosed }: Props) {
 
         {/* Resumen */}
         <div className="shift-close-summary">
-          {totalDevueltos > 0 && <span>↩ {totalDevueltos} ingrediente{totalDevueltos > 1 ? 's' : ''} a devolver</span>}
-          {totalMermas > 0    && <span>📉 {totalMermas} merma{totalMermas > 1 ? 's' : ''}</span>}
-        </div>
+  {totalDevueltos > 0 && <span>↩ {totalDevueltos} ingrediente{totalDevueltos > 1 ? 's' : ''} a devolver</span>}
+  {totalMermas > 0 && <span><TrendingDown size={13}/> {totalMermas} merma{totalMermas > 1 ? 's' : ''}</span>}
+</div>
 
         {error && <p className="shift-modal-error">{error}</p>}
 
@@ -187,8 +187,8 @@ export default function ShiftClosePanel({ onClose, onClosed }: Props) {
           <button className="admin-btn-ghost" onClick={onClose} disabled={saving}>Cancelar</button>
           <button className="mip-btn-close" onClick={handleClose} disabled={saving}
             style={{ background: '#ef4444' }}>
-            {saving ? 'Cerrando...' : '🔒 Confirmar cierre de turno'}
-          </button>
+  {saving ? 'Cerrando...' : <><Lock size={15}/> Confirmar cierre de turno</>}
+</button>
         </div>
       </div>
     </div>

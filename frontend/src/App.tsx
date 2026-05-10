@@ -6,7 +6,7 @@
 //   + Ruta cocina: /cocina/bodega
 //   - Eliminado import de TableValidator.tsx (no estaba en ninguna ruta)
 // ============================================================
-
+import TablesMgmt from './pages/admin/TablesMgmt';
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppStore } from './store/appStore';
@@ -48,13 +48,14 @@ import RecipeEditor       from './pages/admin/RecipeEditor';
 import MovementsLog       from './pages/admin/MovementsLog';
 import BodegaView         from './pages/cocina/BodegaView';
 
+import MenuCliente from './pages/MenuCliente';
+
 const Unauthorized = () => (
   <div style={{
-    minHeight: '100svh', background: '#080810', color: '#f0ece6',
+    minHeight: '100svh', background: '#f0ece6', color: '#080810',
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     justifyContent: 'center', gap: '14px', fontFamily: 'sans-serif',
   }}>
-    <Lock size={52} />
     <h2 style={{ margin: 0 }}>Acceso denegado</h2>
     <a href="/" style={{ color: '#f97316', fontSize: 13, textDecoration: 'none' }}>← Inicio</a>
   </div>
@@ -116,6 +117,8 @@ export default function App() {
           element={<ProtectedRoute allowedRoles={['admin']}><Reports /></ProtectedRoute>} />
         <Route path="/admin/settings"
           element={<ProtectedRoute allowedRoles={['admin']}><Settings /></ProtectedRoute>} />
+          <Route path="/admin/mesas"
+  element={<ProtectedRoute allowedRoles={['admin']}><TablesMgmt /></ProtectedRoute>} />
 
         {/* ── Admin — Fase 9: Inventario ── */}
         <Route path="/admin/inventario"
@@ -127,6 +130,7 @@ export default function App() {
         <Route path="/admin/recetas"
           element={<ProtectedRoute allowedRoles={['admin']}><RecipeEditor /></ProtectedRoute>} />
 
+<Route path="/mesero/menu-cliente" element={<MenuCliente />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*"             element={<Navigate to="/" replace />} />
       </Routes>

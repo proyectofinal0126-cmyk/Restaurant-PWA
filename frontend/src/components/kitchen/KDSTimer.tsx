@@ -32,9 +32,9 @@ function getColor(minutes: number): TimerColor {
 }
 
 function getEmoji(color: TimerColor): string {
-  if (color === 'green')  return '🟢';
-  if (color === 'yellow') return '🟡';
-  return '🔴';
+if (color === 'green')  return '●';
+if (color === 'yellow') return '●';
+return '●';
 }
 
 function formatTime(minutes: number): string {

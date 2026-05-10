@@ -10,6 +10,9 @@ import {
   validateTable,
   getAllTables,
   updateTableStatus,
+  createTable,
+  updateTable,
+  deleteTable,
 } from '../controllers/tableController';
 import { authenticate } from '../middleware/auth';
 import { requireRole }  from '../middleware/roleAuth';
@@ -39,5 +42,7 @@ router.patch(
   requireRole(['mesero', 'caja', 'admin']),
   updateTableStatus
 );
-
+router.post('/', authenticate, requireRole(['admin']), createTable);
+router.put('/:id', authenticate, requireRole(['admin']), updateTable);
+router.delete('/:id', authenticate, requireRole(['admin']), deleteTable);
 export default router;

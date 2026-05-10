@@ -12,6 +12,7 @@ import { useShiftStore }   from '../../store/shiftStore';
 import { apiFetch }        from '../../services/api';
 import type { ShiftWithdrawal } from '../../types/inventory';
 import type { ShiftItem }       from '../../types/shift';
+import { Package, CheckCircle, AlertTriangle, AlertOctagon } from 'lucide-react';
 
 type MiniStatus = ShiftItem['mini_status'];
 
@@ -28,7 +29,7 @@ function IngredientBar({ item }: { item: ShiftItem }) {
     AGOTADO: '#6b7280',
   };
   const label: Record<MiniStatus, string> = {
-    OK: '🟢', BAJO: '🟡', CRITICO: '🔴', AGOTADO: '⚫',
+    OK: 'OK', BAJO: 'Bajo', CRITICO: 'Crítico', AGOTADO: 'Agotado',
   };
 
   return (
@@ -50,8 +51,8 @@ function IngredientBar({ item }: { item: ShiftItem }) {
       {(item.mini_status === 'CRITICO' || item.mini_status === 'AGOTADO') && (
         <p className="mip-alert-text">
           {item.mini_status === 'AGOTADO'
-            ? '⚫ Agotado — ir a bodega'
-            : `🔴 Crítico — ${pct.toFixed(0)}% restante`}
+            ? 'Agotado — ir a bodega'
+            : `Crítico — ${pct.toFixed(0)}% restante`}
         </p>
       )}
     </div>
@@ -100,7 +101,7 @@ export default function MiniInventoryPanel({ onOpenRestock, onOpenClose }: Props
     return (
       <aside className="mini-inv-panel">
         <div className="mip-header">
-          <h2 className="mip-title">🧺 Mini-inventario</h2>
+          <h2 className="mip-title"><Package size={15}/> Mini-inventario</h2>
         </div>
         <div className="mip-no-shift">
           <p>Sin turno activo</p>
@@ -124,7 +125,7 @@ export default function MiniInventoryPanel({ onOpenRestock, onOpenClose }: Props
       {/* Header del panel */}
       <div className="mip-header">
         <div>
-          <h2 className="mip-title">🧺 Mi turno</h2>
+          <h2 className="mip-title"><Package size={15}/> Mi turno</h2>
           <p className="mip-started">Iniciado a las {startTime}</p>
         </div>
         {alertCount > 0 && (
@@ -134,9 +135,9 @@ export default function MiniInventoryPanel({ onOpenRestock, onOpenClose }: Props
 
       {/* Resumen rápido */}
       <div className="mip-summary">
-        <span className="mip-sum-ok">✅ {okItems} OK</span>
-        {lowItems > 0   && <span className="mip-sum-low">⚠️ {lowItems} bajo</span>}
-        {alertCount > 0 && <span className="mip-sum-crit">🚨 {alertCount} crítico</span>}
+        <span className="mip-sum-ok"><CheckCircle size={13}/> {okItems} OK</span>
+        {lowItems > 0   && <span className="mip-sum-low"><AlertTriangle size={13}/> {lowItems} bajo</span>}
+        {alertCount > 0 && <span className="mip-sum-crit"><AlertOctagon size={13}/> {alertCount} crítico</span>}
       </div>
 
       {/* Lista de ingredientes */}

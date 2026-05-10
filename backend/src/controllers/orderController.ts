@@ -196,7 +196,7 @@ export async function createOrder(req: Request, res: Response) {
         items: itemsResult.rows.map((i: { name: string; quantity: number; special_instructions: string | null }) => ({
           name:     i.name,
           quantity: i.quantity,
-          notes:    i.special_instructions,
+          special_instructions: i.special_instructions,
         })),
       },
     });
@@ -364,7 +364,7 @@ export async function getActiveOrders(_req: Request, res: Response) {
               'name',       mi.name,
               'quantity',   oi.quantity,
               'price', oi.price,
-              'notes',      oi.special_instructions
+              'special_instructions', oi.special_instructions
             )
           ) FILTER (WHERE oi.id IS NOT NULL),
           '[]'

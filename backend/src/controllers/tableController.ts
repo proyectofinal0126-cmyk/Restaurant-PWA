@@ -152,3 +152,57 @@ export async function updateTableStatus(req: Request, res: Response) {
     return res.status(500).json({ message: 'Error al actualizar estado de mesa' });
   }
 }
+// ── POST /api/tables ─────────────────────────────────────────
+export async function createTable(req: Request, res: Response) {
+  try {
+    const { number, capacity, section } = req.body;
+    if (!number || !capacity) return res.status(400).json({ message: 'Número y capacidad son requeridos' });
+
+    const exists = await pool.query('SELECT id FROM tables WHERE number = $1', [number]);
+    if (exists.rows[0]) return res.status(409).json({ message: `La mesa ${number} ya existe` });
+
+    const result = await pool.query(
+      `INSERT INTO tables (number, capacity, section) VALUES ($1, $2, $3) RETURNING *`,
+      [number, capacity, section || null]
+    );
+    return res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('[tables/create]', err);
+    return res.status(500).json({ message: 'Error al crear mesa' });
+  }
+}
+
+// ── PUT /api/tables/:id ──────────────────────────────────────
+export async function updateTable(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { number, capacity, section } = req.body;
+
+    const result = await pool.query(
+      `UPDATE tables SET number=$1, capacity=$2, section=$3 WHERE id=$4 RETURNING *`,
+      [number, capacity, section || null, id]
+    );
+    if (!result.rows[0]) return res.status(404).json({ message: 'Mesa no encontrada' });
+    return res.json(result.rows[0]);
+  } catch (err) {
+    console.error('[tables/update]', err);
+    return res.status(500).json({ message: 'Error al actualizar mesa' });
+  }
+}
+
+// ── DELETE /api/tables/:id ───────────────────────────────────
+export async function deleteTable(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const tableR = await pool.query('SELECT status FROM tables WHERE id=$1', [id]);
+    if (!tableR.rows[0]) return res.status(404).json({ message: 'Mesa no encontrada' });
+    if (tableR.rows[0].status !== 'available') {
+      return res.status(400).json({ message: 'Solo se pueden eliminar mesas disponibles' });
+    }
+    await pool.query('DELETE FROM tables WHERE id=$1', [id]);
+    return res.status(204).send();
+  } catch (err) {
+    console.error('[tables/delete]', err);
+    return res.status(500).json({ message: 'Error al eliminar mesa' });
+  }
+}

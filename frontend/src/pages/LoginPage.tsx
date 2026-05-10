@@ -103,7 +103,7 @@ export default function LoginPage() {
           {/* Header del form */}
           <div className="lc-header">
             <div className={`role-tag rt-${accent}`}>
-              🔒 Acceso: {roleLabel}
+              <Lock size={13}/> Acceso: {roleLabel}
             </div>
             <h1 className="lc-h1">Iniciar sesión</h1>
             <p className="lc-sub">Ingresa tus credenciales del sistema</p>

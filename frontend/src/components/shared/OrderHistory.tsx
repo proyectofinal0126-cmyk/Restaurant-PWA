@@ -53,17 +53,17 @@ interface Props {
 }
 
 const SOURCE_LABEL: Record<string, string> = {
-  autoservicio: '📱 Auto',
-  waiter:       '👤 Mesero',
-  kiosk:        '🖥️ Kiosk',
+  autoservicio: ' Auto',
+  waiter:       ' Mesero',
+  kiosk:        ' Kiosk',
 };
 
 const METHOD_LABEL: Record<string, string> = {
-  efectivo:        '💵 Efectivo',
-  tarjeta_debito:  '💳 Débito',
-  tarjeta_credito: '💳 Crédito',
-  transferencia:   '📲 Transfer.',
-  tarjeta:         '💳 Tarjeta',
+  efectivo:        ' Efectivo',
+  tarjeta_debito:  ' Débito',
+  tarjeta_credito: ' Crédito',
+  transferencia:   ' Transfer.',
+  tarjeta:         ' Tarjeta',
 };
 
 // Genera el HTML completo para la ventana de impresión

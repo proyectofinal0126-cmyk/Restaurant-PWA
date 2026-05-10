@@ -9,7 +9,7 @@
 //  4. WebSocket: nuevo evento inventory:stock_update y low_stock_alert
 //  5. Al marcar ítem como completado → POST /api/orders/items/:id/prepare
 // ============================================================
-
+import { AlertTriangle } from 'lucide-react';
 import { useEffect, useCallback, useState } from 'react';
 import { useNavigate }              from 'react-router-dom';
 import { useAppStore }              from '../../store/appStore';
@@ -193,7 +193,7 @@ export default function KDS() {
           {/* Badge de alertas del mini-inventario */}
           {alertCount > 0 && (
             <span className="kds-inv-alert-badge" title={`${alertCount} ingrediente(s) crítico(s)`}>
-              ⚠️ {alertCount}
+              <AlertTriangle size={14}/> {alertCount}
             </span>
           )}
 

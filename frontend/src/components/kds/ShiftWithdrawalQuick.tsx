@@ -5,7 +5,7 @@
 // El cocinero selecciona ingredientes y cantidades a agregar
 // al mini-inventario sin salir de la vista de cocina.
 // ============================================================
-
+import { RefreshCw, X, Check } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useShiftStore }        from '../../store/shiftStore';
 import { apiFetch }             from '../../services/api';
@@ -105,11 +105,11 @@ export default function ShiftWithdrawalQuick({ onClose, onDone }: Props) {
   );
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="shift-modal">
-        <div className="shift-modal-header">
-          <h3>🔄 Reabastecer turno</h3>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+<div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+  <div className="shift-modal">
+    <div className="shift-modal-header">
+      <h3><RefreshCw size={15}/> Reabastecer turno</h3>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar"><X size={15}/></button>
         </div>
 
         {loading ? (
@@ -133,7 +133,7 @@ export default function ShiftWithdrawalQuick({ onClose, onDone }: Props) {
                   />
                   <span className="restock-unit">{line.unit}</span>
                   <button className="restock-remove-btn" onClick={() => handleRemoveLine(line.ingredient_id)}>
-                    ✕
+                    <X size={13}/>
                   </button>
                 </div>
               ))}
@@ -166,10 +166,10 @@ export default function ShiftWithdrawalQuick({ onClose, onDone }: Props) {
             {error && <p className="shift-modal-error">{error}</p>}
 
             <div className="shift-modal-footer">
-              <button className="admin-btn-ghost" onClick={onClose} disabled={saving}>Cancelar</button>
-              <button className="mip-btn-restock" onClick={handleSubmit} disabled={saving}>
-                {saving ? 'Procesando...' : '✅ Confirmar reabasto'}
-              </button>
+  <button className="admin-btn-ghost" onClick={onClose} disabled={saving}>Cancelar</button>
+  <button className="mip-btn-restock" onClick={handleSubmit} disabled={saving}>
+    {saving ? 'Procesando...' : <><Check size={15}/> Confirmar reabasto</>}
+  </button>
             </div>
           </>
         )}
